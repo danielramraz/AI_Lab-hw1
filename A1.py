@@ -40,7 +40,7 @@ def genetic_algorithm(pop_size, num_genes, fitness_func, max_generations, cross_
         genTime = time.time()                                                       # information
         print("=========================================")
         print(f"the start time for this gen is {time.asctime(time.gmtime(genTime))}")
-        print(f"--------avarege for this gen is {avarege_fitness(fitnesses[0])}")
+        print(f"--------averege for this gen is {averege_fitness(fitnesses[0])}")
                 
         show_histogram(fitnesses)
         
@@ -95,11 +95,11 @@ def bulls_eye(individual, target, score):                   # explotation
             score += 5
     return score
 
-def avarege_fitness(fitness):                               # information
-    avarege = sum(fitness) / len(fitness)
-    variance = sum([((x-avarege)**2) for x in fitness]) / len(fitness)
+def averege_fitness(fitness):                               # information
+    averege = sum(fitness) / len(fitness)
+    variance = sum([((x-averege)**2) for x in fitness]) / len(fitness)-1
     sd = variance**0.5
-    return (avarege, sd)
+    return (averege, sd)
 
 def show_histogram(array):
     np_array = np.array(array)
