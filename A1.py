@@ -4,8 +4,10 @@ import numpy as np
 import time
 import matplotlib.pyplot as plt
 from enum import Enum
+import A2
 
 MUTATION_INDIVIDUALS = 10
+
 
 class CROSSOVER_OPERATOR (Enum):
     NONE = 0
@@ -13,8 +15,6 @@ class CROSSOVER_OPERATOR (Enum):
     TWO = 2
     UNIFORM = 3
 
-
-# Define the fitness function
 def fitness(individual):                                    # explotation
     target = list("Hello, world!")
     score = 0
@@ -27,9 +27,7 @@ def fitness(individual):                                    # explotation
     # score = 0
     return (score, bullsEyeScore)
 
-
-# Define the genetic algorithm
-def genetic_algorithm(pop_size, num_genes, fitness_func, max_generations, cross_operator):
+def genetic_algorithm(pop_size, num_genes, fitness_func, max_generations, cross_operator, parent_selection):
     # Initialize the population with random individuals
     population = []
     fitnesses = [(0,0)]
@@ -59,6 +57,7 @@ def genetic_algorithm(pop_size, num_genes, fitness_func, max_generations, cross_
         # Generate new individuals by applying crossover and mutation operators
         offspring = []
         while len(offspring) < pop_size - elite_size:
+            
             parent1 = random.choice(elites)
             parent2 = random.choice(elites)
             child = crossover_operator(cross_operator , parent1 , parent2 , num_genes)          # exploration   
@@ -130,10 +129,10 @@ def mutation(individual):                # exploration
     return individual
     
 
-
 def main():
-    # Run the genetic algorithm and print the result
+
     crossover_operator_input = int(input("Enter the number of crossover operator:\nNone = 0 \nSingel = 1\nTwo = 2\nUniform = 3\n"))
+    parent_selection_input = int(input("Enter the parent selection oprator:\nRWS = 0 \nSUS = 1\nTOURNAMENT RANKING = 2\n"))
     
     total_time = time.time()                                                       # information
     print(f"the start time for this algo is {time.asctime(time.gmtime(total_time))}")
@@ -142,7 +141,8 @@ def main():
                                                       num_genes = 13, 
                                                       fitness_func = fitness, 
                                                       max_generations = 100,
-                                                      cross_operator = crossover_operator_input)
+                                                      cross_operator = crossover_operator_input,
+                                                      parent_selection = A2.parent_selection_function(parent_selection_input))
     
     print(f"the total time for this algo is {time.time() - total_time} sec")
     print(f"the ticks time for this algo is {int(time.perf_counter())}")
@@ -153,6 +153,5 @@ def main():
 
 if __name__ == "__main__":
     main()
-
 
 # %%
