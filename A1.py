@@ -136,7 +136,7 @@ def main():
     best_individual, best_fitness = flow_manger.genetic_algorithm()
     print("==============Final Result==================")
     flow_manger.print_time()
-    print("Best individual:", ''.join(best_individual))
+    print("Best individual:", ''.join(best_individual.gen))
     print("Best fitness:", best_fitness)
     # crossover_operator_input = int(input("Enter the number of crossover operator:\nNone = 0 \nSingel = 1\nTwo = 2\nUniform = 3\n"))
     # parent_selection_input = int(input("Enter the parent selection oprator:\nRWS = 0 \nSUS = 1\nTOURNAMENT RANKING = 2\n"))

@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import random
 import CrossoverOperator
 import ParentOperator
+import Individual
 from Data import Data
 MUTATION_INDIVIDUALS = 10
 
@@ -17,7 +18,9 @@ class GeneticAlgorithm:
         parent_op = ParentOperator.ParentOperator()
 
         for i in range(data.pop_size):
-            individual = [chr(random.randint(32, 126)) for j in range(data.num_genes)]
+            individual_gen = [chr(random.randint(32, 126)) for j in range(data.num_genes)]
+            # print(f" new ind is {individual_gen} and the len {len(individual_gen)}")
+            individual = Individual.Individual(individual_gen)
             population.append(individual)
 
         # Evolve the population for a fixed number of generations
@@ -43,10 +46,13 @@ class GeneticAlgorithm:
             # Generate new individuals by applying crossover and mutation operators
             offspring = []
             while len(offspring) < data.pop_size - elite_size:
-                parent1 = random.choice(elites)
-                parent2 = random.choice(elites)
-                # parent1 = parent_op.parent_selection_function(data.parent_selection, population)
-                # parent2 = parent_op.parent_selection_function(data.parent_selection, population)
+                # parent1 = random.choice(elites)
+                # parent2 = random.choice(elites)
+                parent1 = parent_op.parent_selection_function(data.parent_selection, population)
+                parent2 = parent_op.parent_selection_function(data.parent_selection, population)
+                
+                print(f"parent 1 = {type(parent1)}, parent 2 = {type(parent2)}")
+
                 child = crossover_op.crossover_operator(data.cross_operator, parent1, parent2, data.num_genes)  # exploration
                 offspring.append(child)
 
@@ -65,24 +71,25 @@ class GeneticAlgorithm:
 
         return best_individual, best_fitness
 
-    def fitness(self, individual):  # explotation
+    def fitness(self, individual: Individual):  # explotation
         target = list("Hello, world!")
         score = 0
-        for i in range(len(individual)):
-            if individual[i] == target[i]:
+        for i in range(individual.gen_len):
+            # print(f"individual gen len {individual.gen_len}")
+            if individual.gen[i] == target[i]:
                 score += 1
 
         bullsEyeScore = self.bulls_eye(individual, target, score)  # add rienforcement to fitness func
         # bullsEyeScore = 0
         # score = 0
-
+        individual.score = (score, bullsEyeScore)
         return score, bullsEyeScore
 
-    def bulls_eye(self, individual, target, score):  # exploitation
-        for i in range(len(individual)):
-            if individual[i] == target[i]:
+    def bulls_eye(self, individual: Individual, target, score):  # exploitation
+        for i in range(individual.gen_len):
+            if individual.gen[i] == target[i]:
                 score += 10
-            elif individual[i] in target:
+            elif individual.gen[i] in target:
                 score += 5
         return score
 
@@ -100,8 +107,8 @@ class GeneticAlgorithm:
         plt.show()
         return
 
-    def mutation(self, individual):  # exploration
-        num_genes = len(individual)
+    def mutation(self, individual: Individual):  # exploration
+        num_genes = individual.gen_len
         rand_gen = random.randint(0, num_genes - 1)
-        individual[rand_gen] = chr(random.randint(32, 126))
+        individual.gen[rand_gen] = chr(random.randint(32, 126))
         return individual
