@@ -1,6 +1,6 @@
 import random
-import Individual
-
+from Individual import Individual
+import numpy as np
 
 class ParentOperator:
     def __init__(self):
@@ -8,26 +8,34 @@ class ParentOperator:
         self.SUS = 1
         self.TOURNAMENT_RANKING = 2
 
-    def parent_selection_function(self, parent_selection_input: int, population: list,):
+    def parent_selection_function(self, parent_selection_input: int, population: list, next_generation: int):
         if parent_selection_input == self.RWS:
-            self.rws(population)
+            return self.rws(population)
         elif parent_selection_input == self.SUS:
-            self.sus(population)
+            return self.sus(population, next_generation)
         elif parent_selection_input == self.TOURNAMENT_RANKING:
-            self.tournament_ranking()
+            return self.tournament_ranking()
 
-    def rws(self, population: list) -> Individual.Individual:
+    def rws(self, population: list) -> Individual:
         sum_score = self.score_sum(population)
         weight_arr = []
         for individual in population:
             weight_arr.append(individual.score[1]/sum_score)
 
-        print(f"weights array {weight_arr}")
-        # print(f"choise {random.choices(population, weights = weight_arr, k = 1)}")
-        return random.choices(population, weights = weight_arr, k = 1)
+        # print(f"result type {type(result)}")
+        # print(f"choice {type(random.choices(population, weights = weight_arr, k = 1)[0])}")
+        return (random.choices(population, weights=weight_arr, k=1))[0]
 
-    def sus(self, population: list):
-        return 6
+    def sus(self, population: list, next_generation: int):
+        #sum_score = self.score_sum(population)
+        #weight_arr = []
+        #for individual in population:
+            #weight_arr.append(individual.score[1]/sum_score)
+
+        #parent1 = (random.choices(population, weights=weight_arr, k=1))[0]
+        #slice_size = next_generation/360
+
+        return
 
     def tournament_ranking(self):
         return 7

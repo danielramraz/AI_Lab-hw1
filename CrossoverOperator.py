@@ -1,5 +1,4 @@
 import random
-
 from Individual import Individual
 
 

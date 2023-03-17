@@ -1,9 +1,5 @@
 
-
-
-
 class Individual:
-
     gen: str
     score: tuple
     gen_len: int

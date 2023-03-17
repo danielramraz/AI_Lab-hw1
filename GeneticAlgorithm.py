@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import random
 import CrossoverOperator
 import ParentOperator
-import Individual
+from Individual import Individual
 from Data import Data
 MUTATION_INDIVIDUALS = 10
 
@@ -20,7 +20,7 @@ class GeneticAlgorithm:
         for i in range(data.pop_size):
             individual_gen = [chr(random.randint(32, 126)) for j in range(data.num_genes)]
             # print(f" new ind is {individual_gen} and the len {len(individual_gen)}")
-            individual = Individual.Individual(individual_gen)
+            individual = Individual(individual_gen)
             population.append(individual)
 
         # Evolve the population for a fixed number of generations
@@ -36,7 +36,7 @@ class GeneticAlgorithm:
             print(f"the start time for this gen is {time.asctime(time.gmtime(genTime))}")
             print(f"average for this gen is {new_average}")
 
-            self.show_histogram(fitnesses)
+            #self.show_histogram(fitnesses)
 
             # Select the best individuals for reproduction
             elite_size = int(data.pop_size * 0.1)  # exploitation
@@ -45,11 +45,12 @@ class GeneticAlgorithm:
 
             # Generate new individuals by applying crossover and mutation operators
             offspring = []
+            next_generation = data.pop_size - elite_size
             while len(offspring) < data.pop_size - elite_size:
                 # parent1 = random.choice(elites)
                 # parent2 = random.choice(elites)
-                parent1 = parent_op.parent_selection_function(data.parent_selection, population)
-                parent2 = parent_op.parent_selection_function(data.parent_selection, population)
+                parent1 = parent_op.parent_selection_function(data.parent_selection, population, next_generation)
+                parent2 = parent_op.parent_selection_function(data.parent_selection, population, next_generation)
                 
                 print(f"parent 1 = {type(parent1)}, parent 2 = {type(parent2)}")
 
