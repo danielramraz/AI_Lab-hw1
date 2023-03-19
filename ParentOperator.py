@@ -44,5 +44,5 @@ class ParentOperator:
         sum_score = 0
         for individual in population:
             sum_score += individual.score[1]
-        print(f"sum score {sum_score}")
+        # print(f"sum score {sum_score}")
         return sum_score
