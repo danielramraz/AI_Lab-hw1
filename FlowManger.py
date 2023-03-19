@@ -14,7 +14,9 @@ class FlowManger:
                          num_genes=13,
                          max_generations=100,
                          cross_operator=crossover_operator_input,
-                         parent_selection=parent_selection_input)
+                         parent_selection=parent_selection_input,
+                         age_factor=0.5,
+                         max_age=10)
         return
 
     def genetic_algorithm(self):
