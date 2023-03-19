@@ -4,9 +4,10 @@ import numpy as np
 
 class ParentOperator:
     def __init__(self):
-        self.RWS = 0
-        self.SUS = 1
-        self.TOURNAMENT_RANKING = 2
+        self.NONE = 0
+        self.RWS = 1
+        self.SUS = 2
+        self.TOURNAMENT_RANKING = 3
 
     def parent_selection_function(self, parent_selection_input: int, population: list):
         if parent_selection_input == self.RWS:
@@ -15,7 +16,9 @@ class ParentOperator:
             return self.sus(population)
         elif parent_selection_input == self.TOURNAMENT_RANKING:
             return self.tournament_ranking(population)
-
+        
+        return 
+    
     def rws(self, population: list):
         sum_score = self.score_sum(population)
         fitness = self.scale(population)

@@ -9,7 +9,7 @@ class FlowManger:
     def __init__(self, current_time: time):
         self.total_time = current_time
         crossover_operator_input = int(input("Enter the number of crossover operator:\nNone = 0 \nSingel = 1\nTwo = 2\nUniform = 3\nPMX = 4\nCX =5\n"))
-        parent_selection_input = int(input("Enter the parent selection oprator:\nRWS = 0 \nSUS = 1\nTOURNAMENT RANKING = 2\n"))
+        parent_selection_input = int(input("Enter the parent selection oprator:\nNone = 0 \nRWS = 1 \nSUS = 2\nTOURNAMENT RANKING = 3\n"))
         self.data = Data(pop_size=100,
                          num_genes=8,
                          max_generations=100,

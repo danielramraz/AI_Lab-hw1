@@ -58,11 +58,11 @@ class GeneticAlgorithm:
             # Generate new individuals by applying crossover and mutation operators
             offspring = []
             while len(offspring) < data.pop_size - elite_size:
-                # parent1 = random.choice(elites)
-                # parent2 = random.choice(elites)
-                parents = parent_op.parent_selection_function(data.parent_selection, population)
-                parent1 = parents[0]
-                parent2 = parents[1]
+                parent1 = random.choice(elites)
+                parent2 = random.choice(elites)
+                # parents = parent_op.parent_selection_function(data.parent_selection, population)
+                # parent1 = parents[0]
+                # parent2 = parents[1]
 
                 child = crossover_op.crossover_operator(data.cross_operator, parent1, parent2, data.num_genes)  # exploration
                 offspring.append(child)
@@ -89,8 +89,8 @@ class GeneticAlgorithm:
             print(f"The ticks time for this gen is {int(time.perf_counter())}")
 
         # Find the individual with the highest fitness
-        best_individual = max(population, key=lambda individual: self.queens_fitness(individual, data))  # exploitation
-        best_fitness = self.queens_fitness(best_individual, data)
+        best_individual = max(population, key=lambda individual: self.queens_fitness(individual))  # exploitation
+        best_fitness = self.queens_fitness(best_individual)
 
         return best_individual, best_fitness
 
