@@ -19,13 +19,11 @@ class CrossoverOperator:
 
         if operator == self.SINGLE:
             rand_a = random.randint(0, num_genes)
-            # print(f"random {rand_a}")
             child_gen = [parent1.gen[i] if i < rand_a else parent2.gen[i] for i in range(num_genes)]
 
         elif operator == self.TWO:
             rand_a = random.randint(0, num_genes - 1)
             rand_b = random.randint(rand_a, num_genes)
-            # print(f"random {rand_a} , {rand_b}")
             child_gen = [parent1.gen[i] if i < rand_a or i > rand_b else parent2.gen[i] for i in range(num_genes)]
 
         elif operator == self.UNIFORM:

@@ -10,11 +10,13 @@ class FlowManger:
         self.total_time = current_time
         crossover_operator_input = int(input("Enter the number of crossover operator:\nNone = 0 \nSingel = 1\nTwo = 2\nUniform = 3\nPMX = 4\nCX =5\n"))
         parent_selection_input = int(input("Enter the parent selection oprator:\nRWS = 0 \nSUS = 1\nTOURNAMENT RANKING = 2\n"))
-        self.data = Data(pop_size = 100,
-                         num_genes = 8,
-                         max_generations = 100,
-                         cross_operator = crossover_operator_input,
-                         parent_selection = parent_selection_input)
+        self.data = Data(pop_size=100,
+                         num_genes=8,
+                         max_generations=100,
+                         cross_operator=crossover_operator_input,
+                         parent_selection=parent_selection_input,
+                         age_factor=0.5,
+                         max_age=10)
         return
 
     def genetic_algorithm(self):
