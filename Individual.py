@@ -1,7 +1,7 @@
 
 class Individual:
     gen: str
-    score: tuple
+    score: float
     gen_len: int
     age: int
 
