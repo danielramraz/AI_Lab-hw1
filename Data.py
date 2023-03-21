@@ -4,11 +4,11 @@ from ParentOperator import ParentOperator
 class Data:
     def __init__(self):
         problem = int(input("Select a problem:\nString = 0\nN-Queens = 1\nBinPacking = 2\n"))
-        crossover_operator = int(input("Enter the number of crossover operator:\nNone = 0 \nSingel = 1\nTwo = 2\nUniform = 3\n"))
-        parent_selection = int(input("Enter the parent selection oprator:\nRWS = 0 \nSUS = 1\nTOURNAMENT RANKING = 2\nPMX = 3\nCX = 4\n"))
-        mutation_selection = int(input("Enter them mutation:\nNone = 0 \nString mutation= 1\n= 2\nPMX = 3\nCX = 4\n")) #לעדכן לפי דניאל
-        age_factor = int(input("Enter the age factor:\n"))
         fitness_function = int(input("Enter the fitness function:\noriginal = 0 \nbulls eye = 1\n"))
+        mutation_selection = int(input("Enter them mutation:\nNone = 0 \nString mutation= 1\ninvertion shuffle = 2\nJust shuffle = 3\n"))
+        crossover_operator = int(input("Enter the number of crossover operator:\nNone = 0 \nSingel = 1\nTwo = 2\nUniform = 3\nPMX = 4\nCX = 5\nBIN_PACKING = 6\n"))
+        parent_selection = int(input("Enter the parent selection oprator:\nNone = 0 \nRWS = 1 \nSUS = 2\nTOURNAMENT RANKING = 3\n"))
+        age_factor = float(input("Enter the age factor:\n"))
 
         self.problem = problem
         self.fitness_function = fitness_function
@@ -17,6 +17,6 @@ class Data:
         self.parent_selection = parent_selection
         self.age_factor = age_factor
         self.pop_size = 100
-        self.num_genes = 13
+        self.num_genes = 8
         self.max_generations = 100
-        self.max_age = 10
+        self.max_age = 100

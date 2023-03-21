@@ -1,27 +1,33 @@
 import random
 from Individual import Individual
+import Population
 import numpy as np
 
 class ParentOperator:
     def __init__(self):
-        self.RWS = 0
-        self.SUS = 1
-        self.TOURNAMENT_RANKING = 2
+        self.NONE = 0
+        self.RWS = 1
+        self.SUS = 2
+        self.TOURNAMENT_RANKING = 3
 
-    def parent_selection_function(self, parent_selection_input: int, population: list):
-        if parent_selection_input == self.RWS:
+    def parent_selection_function(self, parent_selection_input: int, population: list, elites: list):
+        if parent_selection_input == self.NONE:
+            return [random.choice(elites), random.choice(elites)]
+        elif parent_selection_input == self.RWS:
             return self.rws(population)
         elif parent_selection_input == self.SUS:
             return self.sus(population)
         elif parent_selection_input == self.TOURNAMENT_RANKING:
             return self.tournament_ranking(population)
-
+        
+        return
+    
     def rws(self, population: list):
         sum_score = self.score_sum(population)
         fitness = self.scale(population)
         weight_arr = []
         for index in range(len(fitness)):
-            weight_arr.append(fitness[index]/sum_score)
+            weight_arr.append(abs(fitness[index]/sum_score))
 
         return random.choices(population, weights=weight_arr, k=2)
 
@@ -42,7 +48,7 @@ class ParentOperator:
             fit = first_spine_pointer + i * delta
             current, j = 0, 0
             while current < fit:
-                current += population[j].score[1]
+                current += population[j].score
                 j += 1
             parents.append(population[j])
 
@@ -56,28 +62,25 @@ class ParentOperator:
 
         k_individual = random.choices(population, k=number_of_competitors)
         for individual in k_individual:
-            k_fitness.append(individual.score[1])
+            k_fitness.append(individual.score)
 
         k_sorted = sorted(range(number_of_competitors), key=lambda i: k_fitness[i], reverse=True)[:number_of_parents]
         parents = [k_individual[i] for i in k_sorted]
 
         return parents
 
-    def score_sum(self, population):
+    def score_sum(self, population: list):
         sum_score = 0
         for individual in population:
-            sum_score += individual.score[1]
-        # print(f"sum score {sum_score}")
+            sum_score += individual.score
         return sum_score
-
-    def return_fitnesses(self, individual: Individual):
-        return individual.score[1]
 
     def scale(self, population: list):
         scaled_fitnesses = []
         for individual in population:
-            if individual.score[1] != 0:
-                scaled_fitnesses.append(1/individual.score[1]**0.5)
+            if individual.score != 0:
+                scaled_fitnesses.append(1/individual.score**0.5)
             else:
                 scaled_fitnesses.append(0)
         return scaled_fitnesses
+
