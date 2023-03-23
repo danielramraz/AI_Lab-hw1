@@ -27,7 +27,7 @@ class StringIndividual(Individual):
             if self.gen[i] == target[i]:
                 score += 1
 
-        normalized_age = self.age / self.max_age
+        normalized_age = self.age / data.max_age
         age_score = 1 - normalized_age
         score = (1 - data.age_factor) * score + data.age_factor * age_score
 

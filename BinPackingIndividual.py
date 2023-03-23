@@ -58,8 +58,6 @@ class BinPackingIndividual(Individual):
         age_score = 1 - normalized_age
         score = (1 - data.age_factor) * score + data.age_factor * age_score
 
-        # print(self.gen)
-        # print(score)
         return score
 
     def mutation(self, data: Data):

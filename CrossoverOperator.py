@@ -1,5 +1,6 @@
 import random
 import math
+import Data
 from Individual import Individual
 
 
@@ -14,9 +15,8 @@ class CrossoverOperator:
         self.CX = 5
         self.BIN_PACKING = 6
 
-    def crossover_operator(self, operator, parent1: Individual, parent2: Individual, num_genes: int):  # exploration
-        # print(f"operator {operator} of type {type(operator)}")
-        # print(type(parent1))
+    def crossover_operator(self, operator, parent1: Individual, parent2: Individual, num_genes: int, data: Data):  # exploration
+
         if operator == self.NONE:
             child_gen = [parent1.gen[i] if random.random() < 0.5 else parent2.gen[i] for i in range(num_genes)]
 
@@ -42,8 +42,7 @@ class CrossoverOperator:
             child_gen = []
             ran = random.random()
             copy_objects = parent1.objects.copy()
-            # size_gen = max(len(parent1.gen), len(parent2.gen))
-            size_gen = math.ceil(sum(copy_objects)/150) * 2
+            size_gen = math.ceil(sum(copy_objects)/data.max_age) * 2
 
             # fill child with empty bins
             for i in range(size_gen):
@@ -94,9 +93,6 @@ class CrossoverOperator:
             #         break
 
             child_gen = list(filter(None, child_gen))
-            # print("p1: ", parent1.gen)
-            # print("p2: ", parent2.gen)
-            # print("child: ", child_gen)
 
         return child_gen
 

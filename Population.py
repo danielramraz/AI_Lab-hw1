@@ -13,7 +13,7 @@ import CrossoverOperator
 import ParentOperator
 from Data import Data
 MUTATION_INDIVIDUALS = 10
-ELITE_PERCENTAGE = 0.20
+ELITE_PERCENTAGE = 0.80
 
 
 class Population:
@@ -87,7 +87,7 @@ class Population:
                     temp_objects = self.objects.copy()
                     child = BinPackingIndividual(self.data, temp_objects, self.max_weight)
 
-                child_gen = crossover_op.crossover_operator(self.data.cross_operator, parent1, parent2, self.data.num_genes)  # exploration
+                child_gen = crossover_op.crossover_operator(self.data.cross_operator, parent1, parent2, self.data.num_genes, self.data)  # exploration
                 child.gen = child_gen
                 child.gen_len = len(child_gen)
                 child.update_score(self.data)
