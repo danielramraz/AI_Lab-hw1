@@ -27,8 +27,12 @@ class StringIndividual(Individual):
             if self.gen[i] == target[i]:
                 score += 1
 
-        score = data.age_factor*self.age + (1 - data.age_factor)*score
+        normalized_age = self.age / self.max_age
+        age_score = 1 - normalized_age
+        score = (1 - data.age_factor) * score + data.age_factor * age_score
+
         return score
+        # score = data.age_factor*self.age + (1 - data.age_factor)*score
 
     def bulls_eye_fitness(self, data: Data):
         target = list("Hello, world!")
@@ -44,7 +48,11 @@ class StringIndividual(Individual):
             elif self.gen[i] in target:
                 score += 5
 
-        bulls_eye_score = data.age_factor*self.age + (1 - data.age_factor)*score
+        # bulls_eye_score = data.age_factor * self.age + (1 - data.age_factor) * score
+        normalized_age = self.age / self.max_age
+        age_score = 1 - normalized_age
+        bulls_eye_score = (1 - data.age_factor) * score + data.age_factor * age_score
+
         return bulls_eye_score
 
     def mutation(self, data: Data):

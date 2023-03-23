@@ -1,4 +1,5 @@
 import random
+import math
 from Individual import Individual
 
 
@@ -41,7 +42,9 @@ class CrossoverOperator:
             child_gen = []
             ran = random.random()
             copy_objects = parent1.objects.copy()
-            size_gen = max(len(parent1.gen), len(parent2.gen))
+            # size_gen = max(len(parent1.gen), len(parent2.gen))
+            size_gen = math.ceil(sum(copy_objects)/150) * 2
+
             # fill child with empty bins
             for i in range(size_gen):
                 child_gen.append([])
@@ -51,23 +54,46 @@ class CrossoverOperator:
 
             for i in range(parent1_part):
                 object = random.sample(copy_objects, 1)[0]
-                # print(object)
-                # print(parent1.gen)
                 for bin in range(len(parent1.gen)):
+                    if object in parent1.gen[bin]:
                         child_gen[bin].append(object)
                         copy_objects.remove(object)
                         break
 
             for i in range(parent2_part):
                 object = random.sample(copy_objects, 1)[0]
-                # print(object)
-                # print(parent1.gen)
                 for bin in range(len(parent2.gen)):
-                    if object in parent1.gen[bin]:
+                    if object in parent2.gen[bin]:
                         child_gen[bin].append(object)
                         copy_objects.remove(object)
                         break
 
+            # mutation
+            copy_objects = parent1.objects.copy()
+            num_object_change = random.randint(0, len(child_gen))
+
+            for i in range(num_object_change):
+                copy_objects = parent1.objects.copy()
+                object = random.sample(copy_objects, 1)[0]
+                random_bin = random.randint(0, len(child_gen) - 1)
+
+                for bin in range(len(child_gen)):
+                    if object in child_gen[bin]:
+                        child_gen[bin].remove(object)
+                        child_gen[random_bin].append(object)
+                        break
+
+            # copy_objects = parent1.objects.copy()
+            # object = random.sample(copy_objects, 1)[0]
+            # random_bin = random.randint(0, len(child_gen)-1)
+            #
+            # for bin in range(len(child_gen)):
+            #     if object in child_gen[bin]:
+            #         child_gen[bin].remove(object)
+            #         child_gen[random_bin].append(object)
+            #         break
+
+            child_gen = list(filter(None, child_gen))
             # print("p1: ", parent1.gen)
             # print("p2: ", parent2.gen)
             # print("child: ", child_gen)

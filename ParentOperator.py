@@ -24,7 +24,7 @@ class ParentOperator:
     
     def rws(self, population: list):
         sum_score = self.score_sum(population)
-        fitness = self.scale(population)
+        fitness = self.winsorize(population)
         weight_arr = []
         for index in range(len(fitness)):
             weight_arr.append(abs(fitness[index]/sum_score))
@@ -33,7 +33,8 @@ class ParentOperator:
 
     def sus(self, population: list):
         sum_score = self.score_sum(population)
-        fitness = self.scale(population)
+        fitness = self.winsorize(population)
+
         for index, individual in enumerate(population):
             if index > 0:
                 fitness[index] += fitness[index-1]
@@ -75,12 +76,26 @@ class ParentOperator:
             sum_score += individual.score
         return sum_score
 
-    def scale(self, population: list):
-        scaled_fitnesses = []
+    def winsorize(self, population: list, percentile=5):
+        fitneses = []
         for individual in population:
-            if individual.score != 0:
-                scaled_fitnesses.append(1/individual.score**0.5)
-            else:
-                scaled_fitnesses.append(0)
-        return scaled_fitnesses
+                fitneses.append(individual.score)
+
+        lower_bound = np.percentile(fitneses, percentile)
+        upper_bound = np.percentile(fitneses, 100 - percentile)
+        fitneses = np.where(fitneses < lower_bound, lower_bound, fitneses)
+        fitneses = np.where(fitneses > upper_bound, upper_bound, fitneses)
+        mean = np.mean(fitneses)
+        std = np.std(fitneses)
+        fitneses = (fitneses - mean) / std
+        return fitneses
+
+        # def scale(self, population: list):
+        # scaled_fitnesses = []
+        # for individual in population:
+        #     if individual.score != 0:
+        #         scaled_fitnesses.append(1/individual.score**0.5)
+        #     else:
+        #         scaled_fitnesses.append(0)
+        # return scaled_fitnesses
 

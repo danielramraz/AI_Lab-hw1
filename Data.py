@@ -17,6 +17,6 @@ class Data:
         self.parent_selection = parent_selection
         self.age_factor = age_factor
         self.pop_size = 100
-        self.num_genes = 8
-        self.max_generations = 100
-        self.max_age = 100
+        self.num_genes = 0
+        self.max_generations = 1000
+        self.max_age = 500

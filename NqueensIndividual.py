@@ -27,7 +27,9 @@ class NqueensIndividual(Individual):
                 if i != j and abs(i - j) == abs(self.gen[i] - self.gen[j]):
                     score -= 1
 
-        score = data.age_factor * self.age + (1 - data.age_factor) * score
+        normalized_age = self.age / self.max_age
+        age_score = 1 - normalized_age
+        score = (1 - data.age_factor) * score + data.age_factor * age_score
         return score
 
     def mutation(self, data: Data):
@@ -63,23 +65,36 @@ class NqueensIndividual(Individual):
 
     # Calculates the difference between the amount of conflicts in the current gene and every other gene in the population
     def genetic_diversification_distance(self, population: list):
-        dist = 0
-        conflict_self = 0
-        conflict_item = 0
-        for i in range(self.gen_len):
-            for j in range(self.gen_len):
-                if i != j and abs(i - j) == abs(self.gen[i] - self.gen[j]):
-                    conflict_self += 1
-
-        for item in population:
+        # Loop invariant: (l, r) are endpoints of the intersecting interval such that
+        # (l <= j < r) if and only if as[i] and bs[j] intersect.
+        l, r = 0, 0
+        total = 0
+        for individual in population:
             for i in range(self.gen_len):
-                for j in range(self.gen_len):
-                    if i != j and abs(i - j) == abs(self.gen[i] - self.gen[j]):
-                        conflict_item += 1
-            dist += abs(conflict_self-conflict_item)
-            conflict_item = 0
+                while r < individual.gen_len and individual.gen[r] < self.gen[i]:
+                    r += 1
+                while l < r and not( self.gen[i]< individual.gen[l]):
+                    l += 1
+                total += r - l
+            return total
 
-        return dist
+        # dist = 0
+        # conflict_self = 0
+        # conflict_item = 0
+        # for i in range(self.gen_len):
+        #     for j in range(self.gen_len):
+        #         if i != j and abs(i - j) == abs(self.gen[i] - self.gen[j]):
+        #             conflict_self += 1
+        #
+        # for item in population:
+        #     for i in range(self.gen_len):
+        #         for j in range(self.gen_len):
+        #             if i != j and abs(i - j) == abs(self.gen[i] - self.gen[j]):
+        #                 conflict_item += 1
+        #     dist += abs(conflict_self-conflict_item)
+        #     conflict_item = 0
+        #
+        # return dist
 
     # Calculates the number of unique promotions
     def genetic_diversification_special(self, population: list):

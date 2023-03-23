@@ -12,6 +12,7 @@ class BinPackingIndividual(Individual):
         self.gen = self.mack_bins(data,  self.objects, self.max_weight)
         self.gen_len = len(self.gen)
         self.age = 0
+        self.score = 0
         self.max_weight = max_weight
         self.fitness_function = data.fitness_function
         self.update_score(data)
@@ -23,7 +24,7 @@ class BinPackingIndividual(Individual):
     def mack_bins(self, data: Data, objects: list, max_weight: int):
         temp_objects = objects.copy()
         sum_objects = sum(temp_objects)
-        num_bins = math.ceil(sum_objects/max_weight)
+        num_bins = math.ceil(sum_objects/max_weight) * 2
         gen = []
 
         for i in range(num_bins):
@@ -46,24 +47,44 @@ class BinPackingIndividual(Individual):
         illegal_bins = 0
 
         for i in range(self.gen_len):
-            # if sum(self.gen[i]) == self.max_weight:
-            #     score += 10
             if sum(self.gen[i]) > self.max_weight:
-                score -= 100 * (sum(self.gen[i]) - self.max_weight)
-                illegal_bins += 1
-            elif len(self.gen[i]) == 0:
-                score -= 50
+                score -= 1 * (sum(self.gen[i]) - self.max_weight)
                 illegal_bins += 1
 
         if illegal_bins > 0:
             score -= illegal_bins * 10
 
-        score = data.age_factor*self.age + (1 - data.age_factor)*score
+        normalized_age = self.age / data.max_age
+        age_score = 1 - normalized_age
+        score = (1 - data.age_factor) * score + data.age_factor * age_score
+
         # print(self.gen)
         # print(score)
         return score
 
     def mutation(self, data: Data):
+        # copy_objects = self.objects.copy()
+        # num_object_change = random.randint(1, self.gen_len)
+        #
+        # for i in range(num_object_change):
+        #     copy_objects = self.objects.copy()
+        #     object = random.sample(copy_objects, 1)[0]
+        #     random_bin = random.randint(0, len(self.gen)-1)
+        #
+        #     for bin in range(self.gen_len):
+        #         if object in self.gen[bin]:
+        #             self.gen[bin].remove(object)
+        #             self.gen[random_bin].append(object)
+        #             break
+        # object = random.sample(copy_objects, 1)[0]
+        # random_bin = random.randint(0, self.gen_len - 1)
+        # for bin in range(self.gen_len):
+        #     if object in self.gen[bin]:
+        #         self.gen[bin].remove(object)
+        #         self.gen[random_bin].append(object)
+        #         copy_objects.remove(object)
+        #         break
+
         return
 
     # Calculates the difference between the amount of full cells in the current gene and every other gene in the population

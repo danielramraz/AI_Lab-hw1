@@ -17,7 +17,6 @@ ELITE_PERCENTAGE = 0.20
 
 
 class Population:
-
     data: Data
     population: list
     fitnesses: list
@@ -29,71 +28,10 @@ class Population:
         self.fitnesses = []
         self.best_individual = 0
         self.best_fitness = 0
-        self.max_weight = 13
-#         self.objects = [42,69,67,57,
-# 93,
-# 90,
-# 38,
-# 36,
-# 45,
-# 42,
-# 33,
-# 79,
-# 27,
-# 57,
-# 44,
-# 84,
-# 86,
-# 92,
-# 46,
-# 38,
-# 85,
-# 33,
-# 82,
-# 73,
-# 49,
-# 70,
-# 59,
-# 23,
-# 57,
-# 72,
-# 74,
-# 69,
-# 33,
-# 42,
-# 28,
-# 46,
-# 30,
-# 64,
-# 29,
-# 74,
-# 41,
-# 49,
-# 55,
-# 98,
-# 80,
-# 32,
-# 25,
-# 38,
-# 82,
-# 30,
-# 35,
-# 39,
-# 57,
-# 84,
-# 62,
-# 50,
-# 55,
-# 27,
-# 30,
-# 36,
-# 20,
-# 78,
-# 47,
-# 26,45,41,58,98,91,96,73,84,37,93,91,43,73,85,81,79,71,80,76,83,41,78,70,23,42,87,43,84,60,55,49,78,73,62,36,44,94,69,32,96,70,84,58,78,25,80,58,66,83,24,98,60,42,43,43,39]
-        # self.objects = [2, 3, 4, 5, 6, 9]
-        self.objects = [random.randint(1, 10) for i in range(15)]
-        print(self.objects)
+        self.max_weight = 0
+        self.objects = []
+        if self.data.problem == 2:
+            self.read_file_bin_packing()
 
         for index in range(self.data.pop_size):
             if self.data.problem == 0:
@@ -101,8 +39,7 @@ class Population:
             elif self.data.problem == 1:
                 individual = NqueensIndividual(self.data)
             elif self.data.problem == 2:
-                temp_objects = self.objects.copy()
-                individual = BinPackingIndividual(self.data, temp_objects, self.max_weight)
+                individual = BinPackingIndividual(self.data, self.objects.copy(), self.max_weight)
                 self.data.num_genes = math.ceil(sum(self.objects) / self.max_weight)
 
             self.population.append(individual)
@@ -152,7 +89,8 @@ class Population:
 
                 child_gen = crossover_op.crossover_operator(self.data.cross_operator, parent1, parent2, self.data.num_genes)  # exploration
                 child.gen = child_gen
-                child.update_score(self.data,)
+                child.gen_len = len(child_gen)
+                child.update_score(self.data)
 
                 if new_average == old_average and mutation_individuals > 0:
                     child.mutation(self.data)
@@ -170,8 +108,8 @@ class Population:
                 if individual.age == self.data.max_age:
                     self.population.remove(individual)
 
-            # Update the size of the   population
-            self.data.pop_size = len(self.population)
+            # Update the size of the   population MAYBE DELETE IT
+            # self.data.pop_size = len(self.population)
 
             #Genetic Diversification
             distance = 0
@@ -209,3 +147,20 @@ class Population:
         plt.hist(np_array)
         plt.show()
         return
+
+    def read_file_bin_packing(self):
+        with open("binpack1.txt") as f:
+            f.readline()
+            f.readline()
+            list_info = f.readline().split()
+            print(list_info)
+            self.max_weight = int(list_info[0])
+            num_items = int(list_info[1])
+            self.best_fitness = int(list_info[2])
+
+            for i in range(num_items):
+                self.objects.append(int(f.readline()))
+
+
+
+
