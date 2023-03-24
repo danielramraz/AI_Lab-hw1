@@ -51,20 +51,27 @@ class Population:
         crossover_op = CrossoverOperator.CrossoverOperator()
         parent_op = ParentOperator.ParentOperator()
 
+        x1 = []
+        y1 = []
+        ax = plt.axes()
+
+        ax.set(xlim=(0, 100), ylim=(0, 100),
+               xlabel='Generation number', ylabel='Average fitness')
         for generation in range(self.data.max_generations):
             mutation_individuals = MUTATION_INDIVIDUALS
 
-            old_average, old_sd = self.average_fitness(self.fitnesses)
+            old_average, old_variance, old_sd = self.average_fitness(self.fitnesses)
             for index, individual in enumerate(self.population):
                 self.fitnesses[index] = individual.score
 
-            new_average, new_sd = self.average_fitness(self.fitnesses)
-            var = new_sd ** 2
+            new_average, new_variance, new_sd = self.average_fitness(self.fitnesses)
 
             gen_time = time.time()  # information
             print("=========================================")
             print(f"Average for this gen is {new_average}")
-            print(f"Selection Pressure for this gen is {var}")
+            print(f"Selection Pressure for this gen is {new_variance}")
+            x1.append(generation)
+            y1.append(new_average)
             # self.show_histogram(self.fitnesses)
 
             # Select the best individuals for reproduction
@@ -131,6 +138,8 @@ class Population:
                 self.best_individual = individual
 
         self.best_fitness = self.best_individual.score
+        ax.plot(np.array(x1), np.array(y1))
+        plt.show()
 
         return
 
@@ -140,7 +149,7 @@ class Population:
         average = sum(fitness) / len(fitness)
         variance = sum([((x - average) ** 2) for x in fitness]) / len(fitness) - 1
         sd = variance ** 0.5
-        return average, sd
+        return average, variance, sd
 
     def show_histogram(self, array):
         np_array = np.array(array)

@@ -43,6 +43,7 @@ class CrossoverOperator:
             ran = random.random()
             copy_objects = parent1.objects.copy()
             size_gen = math.ceil(sum(copy_objects)/data.max_age) * 2
+            # size_gen = max(len(parent1.gen), len(parent2.gen))
 
             # fill child with empty bins
             for i in range(size_gen):
@@ -92,7 +93,8 @@ class CrossoverOperator:
             #         child_gen[random_bin].append(object)
             #         break
 
-            child_gen = list(filter(None, child_gen))
+            # try to change
+            # child_gen = list(filter(None, child_gen))
 
         return child_gen
 

@@ -17,15 +17,18 @@ class FlowManger:
         self.print_time()
 
         bad_bins = 0
-        self.population.best_individual.gen = list(filter(None, self.population.best_individual.gen))
+        num_bins = 0
+        # self.population.best_individual.gen = list(filter(None, self.population.best_individual.gen))
 
         # for item in self.population.best_individual.gen:
         #     if sum(item) > self.population.max_weight:
         #         bad_bins += 1
+        #     if sum(item) > 0:
+        #         num_bins += 1
 
         print("Best individual:", self.population.best_individual.gen)
         # print("BAD bins:", bad_bins)
-        # print("num bins:", len(self.population.best_individual.gen))
+        # print("num bins:", num_bins)
         print("Best fitness:", self.population.best_individual.score)
 
     def print_time(self):
