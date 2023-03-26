@@ -49,7 +49,7 @@ class StringIndividual(Individual):
                 score += 5
 
         # bulls_eye_score = data.age_factor * self.age + (1 - data.age_factor) * score
-        normalized_age = self.age / self.max_age
+        normalized_age = self.age / data.max_age
         age_score = 1 - normalized_age
         bulls_eye_score = (1 - data.age_factor) * score + data.age_factor * age_score
 
