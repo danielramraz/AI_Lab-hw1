@@ -15,7 +15,7 @@ class CrossoverOperator:
         self.CX = 5
         self.BIN_PACKING = 6
 
-    def crossover_operator(self, operator, parent1: Individual, parent2: Individual, num_genes: int, data: Data):  # exploration
+    def crossover_operator(self, operator, parent1: Individual, parent2: Individual, num_genes: int, data: Data, best_solution: int):  # exploration
 
         if operator == self.NONE:
             child_gen = [parent1.gen[i] if random.random() < 0.5 else parent2.gen[i] for i in range(num_genes)]
@@ -42,8 +42,7 @@ class CrossoverOperator:
             child_gen = []
             ran = random.random()
             copy_objects = parent1.objects.copy()
-            size_gen = math.ceil(sum(copy_objects)/data.max_age) * 2
-            # size_gen = max(len(parent1.gen), len(parent2.gen))
+            size_gen = len(copy_objects)
 
             # fill child with empty bins
             for i in range(size_gen):
@@ -67,34 +66,6 @@ class CrossoverOperator:
                         child_gen[bin].append(object)
                         copy_objects.remove(object)
                         break
-
-            # mutation
-            copy_objects = parent1.objects.copy()
-            num_object_change = random.randint(0, len(child_gen))
-
-            for i in range(num_object_change):
-                copy_objects = parent1.objects.copy()
-                object = random.sample(copy_objects, 1)[0]
-                random_bin = random.randint(0, len(child_gen) - 1)
-
-                for bin in range(len(child_gen)):
-                    if object in child_gen[bin]:
-                        child_gen[bin].remove(object)
-                        child_gen[random_bin].append(object)
-                        break
-
-            # copy_objects = parent1.objects.copy()
-            # object = random.sample(copy_objects, 1)[0]
-            # random_bin = random.randint(0, len(child_gen)-1)
-            #
-            # for bin in range(len(child_gen)):
-            #     if object in child_gen[bin]:
-            #         child_gen[bin].remove(object)
-            #         child_gen[random_bin].append(object)
-            #         break
-
-            # try to change
-            # child_gen = list(filter(None, child_gen))
 
         return child_gen
 

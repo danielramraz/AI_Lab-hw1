@@ -90,12 +90,4 @@ class ParentOperator:
         fitneses = (fitneses - mean) / std
         return fitneses
 
-        # def scale(self, population: list):
-        # scaled_fitnesses = []
-        # for individual in population:
-        #     if individual.score != 0:
-        #         scaled_fitnesses.append(1/individual.score**0.5)
-        #     else:
-        #         scaled_fitnesses.append(0)
-        # return scaled_fitnesses
 

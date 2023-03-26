@@ -13,7 +13,7 @@ import CrossoverOperator
 import ParentOperator
 from Data import Data
 MUTATION_INDIVIDUALS = 10
-ELITE_PERCENTAGE = 0.80
+ELITE_PERCENTAGE = 0.50
 
 
 class Population:
@@ -39,7 +39,7 @@ class Population:
             elif self.data.problem == 1:
                 individual = NqueensIndividual(self.data)
             elif self.data.problem == 2:
-                individual = BinPackingIndividual(self.data, self.objects.copy(), self.max_weight)
+                individual = BinPackingIndividual(self.data, self.objects.copy(), self.max_weight, self.best_fitness)
                 self.data.num_genes = math.ceil(sum(self.objects) / self.max_weight)
 
             self.population.append(individual)
@@ -51,12 +51,6 @@ class Population:
         crossover_op = CrossoverOperator.CrossoverOperator()
         parent_op = ParentOperator.ParentOperator()
 
-        x1 = []
-        y1 = []
-        ax = plt.axes()
-
-        ax.set(xlim=(0, 100), ylim=(0, 100),
-               xlabel='Generation number', ylabel='Average fitness')
         for generation in range(self.data.max_generations):
             mutation_individuals = MUTATION_INDIVIDUALS
 
@@ -70,9 +64,7 @@ class Population:
             print("=========================================")
             print(f"Average for this gen is {new_average}")
             print(f"Selection Pressure for this gen is {new_variance}")
-            x1.append(generation)
-            y1.append(new_average)
-            # self.show_histogram(self.fitnesses)
+            self.show_histogram(self.fitnesses)
 
             # Select the best individuals for reproduction
             elite_size = int(self.data.pop_size * ELITE_PERCENTAGE)  # exploitation
@@ -92,9 +84,9 @@ class Population:
                     child = NqueensIndividual(self.data)
                 elif self.data.problem == 2:
                     temp_objects = self.objects.copy()
-                    child = BinPackingIndividual(self.data, temp_objects, self.max_weight)
+                    child = BinPackingIndividual(self.data, temp_objects, self.max_weight, self.best_fitness)
 
-                child_gen = crossover_op.crossover_operator(self.data.cross_operator, parent1, parent2, self.data.num_genes, self.data)  # exploration
+                child_gen = crossover_op.crossover_operator(self.data.cross_operator, parent1, parent2, self.data.num_genes, self.data, self.best_fitness)  # exploration
                 child.gen = child_gen
                 child.gen_len = len(child_gen)
                 child.update_score(self.data)
@@ -115,8 +107,8 @@ class Population:
                 if individual.age == self.data.max_age:
                     self.population.remove(individual)
 
-            # Update the size of the   population MAYBE DELETE IT
-            # self.data.pop_size = len(self.population)
+            # Update the size of the  population
+            self.data.pop_size = len(self.population)
 
             #Genetic Diversification
             distance = 0
@@ -138,8 +130,6 @@ class Population:
                 self.best_individual = individual
 
         self.best_fitness = self.best_individual.score
-        ax.plot(np.array(x1), np.array(y1))
-        plt.show()
 
         return
 

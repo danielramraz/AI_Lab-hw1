@@ -6,9 +6,10 @@ import math
 
 class BinPackingIndividual(Individual):
 
-    def __init__(self, data: Data, objects: list, max_weight: int):
+    def __init__(self, data: Data, objects: list, max_weight: int, best_solution: int):
         self.objects = objects.copy()
         self.max_weight = max_weight
+        self.best_solution = best_solution
         self.gen = self.mack_bins(data,  self.objects, self.max_weight)
         self.gen_len = len(self.gen)
         self.age = 0
@@ -22,61 +23,38 @@ class BinPackingIndividual(Individual):
             self.score = self.original_fitness(data)
 
     def mack_bins(self, data: Data, objects: list, max_weight: int):
-        temp_objects = objects.copy()
-        temp_objects.sort()
-        sum_objects = sum(temp_objects)
-        num_bins = math.ceil(sum_objects / max_weight) * 2
+        copy_objects = objects.copy()
+        num_bins = len(copy_objects)
+        bins_list = []
         gen = []
+
         for i in range(num_bins):
             gen.append([])
+            bins_list.append(i)
 
-        while temp_objects:
-            num_object_in_bin = random.randint(1, len(temp_objects))
-            bin = random.randint(0, len(gen)-1)
+        while copy_objects:
+            num_object_in_bin = random.randint(1, len(copy_objects))
+            bin = random.sample(bins_list, 1)[0]
+            bins_list.remove(bin)
             for i in range(num_object_in_bin):
-                gen[bin].append(temp_objects[0])
+                object = random.sample(copy_objects, 1)[0]
+                gen[bin].append(object)
                 # removing objects that been chosen
-                temp_objects.remove(temp_objects[0])
+                copy_objects.remove(object)
 
-        # temp_objects = (objects.copy()).sort()
-        # sum_objects = sum(temp_objects)
-        # num_bins = math.ceil(sum_objects/max_weight) * 2
-        # gen = []
-        #
-        # for i in range(num_bins):
-        #     num_objects = len(temp_objects)
-        #     if i == num_bins-1 or num_objects == 0:
-        #         try:
-        #             gen.append(temp_objects)
-        #         except:
-        #             gen.append([])
-        #     else:
-        #         num_object_in_bin = random.randint(1, num_objects)
-        #         gen.append(random.sample(temp_objects, num_object_in_bin))
-        #         # removing objects that been chosen
-        #         for item in gen[i]:
-        #             temp_objects.remove(item)
         return gen
 
     def original_fitness(self, data: Data):
-        score = 100
+        score = 10000
         illegal_bins = 0
-        num_no_empty_bin = 0
-        sum_objects = sum(self.objects)
 
         for i in range(self.gen_len):
             if sum(self.gen[i]) > self.max_weight:
-                score -= 1 * (sum(self.gen[i]) - self.max_weight)
+                score -= 5 * (sum(self.gen[i]) - self.max_weight)
                 illegal_bins += 1
-            if sum(self.gen[i]) > 0:
-                num_no_empty_bin += 1
 
         if illegal_bins > 0:
             score -= illegal_bins * 10
-
-        # # הוספת עונש על גנים עם יותר מדי בינים מלאים
-        # if num_no_empty_bin > math.ceil(sum_objects/self.max_weight):
-        #     score -= num_no_empty_bin * 5
 
         normalized_age = self.age / data.max_age
         age_score = 1 - normalized_age
@@ -85,6 +63,18 @@ class BinPackingIndividual(Individual):
         return score
 
     def mutation(self, data: Data):
+        copy_objects = self.objects.copy()
+        num_objects_change = random.randint(0, len(copy_objects))
+
+        for i in range(num_objects_change):
+            random_bin = random.randint(0, len(self.gen) - 1)
+            object = random.sample(copy_objects, 1)[0]
+            for bin in range(len(self.gen)):
+                if object in self.gen[bin]:
+                    self.gen[bin].remove(object)
+                    copy_objects.remove(object)
+                    self.gen[random_bin].append(object)
+                    break
         return
 
     # Calculates the difference between the amount of full cells in the current gene and every other gene in the population
