@@ -87,7 +87,11 @@ class ParentOperator:
         fitneses = np.where(fitneses > upper_bound, upper_bound, fitneses)
         mean = np.mean(fitneses)
         std = np.std(fitneses)
-        fitneses = (fitneses - mean) / std
+        try:
+            fitneses = (fitneses - mean) / std
+        except:
+            fitneses = 0
+            
         return fitneses
 
 
