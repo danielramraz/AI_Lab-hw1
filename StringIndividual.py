@@ -4,6 +4,7 @@ import random
 
 
 class StringIndividual(Individual):
+    target = list("Hello, world!")
 
     def __init__(self, data: Data):
         self.gen = [chr(random.randint(32, 126))for j in range(data.num_genes)]
@@ -18,13 +19,15 @@ class StringIndividual(Individual):
             self.score = self.original_fitness(data)
         elif self.fitness_function == 1:
             self.score = self.bulls_eye_fitness(data)
+        elif self.fitness_function == 2:
+            self.score = self.bitwise_bulls_eye_fitness(data)
+
 
     def original_fitness(self, data: Data):
-        target = list("Hello, world!")
         score = 0
 
         for i in range(self.gen_len):
-            if self.gen[i] == target[i]:
+            if self.gen[i] == self.target[i]:
                 score += 1
 
         normalized_age = self.age / data.max_age
@@ -34,18 +37,29 @@ class StringIndividual(Individual):
         return score
         # score = data.age_factor*self.age + (1 - data.age_factor)*score
 
+    def bitwise_bulls_eye_fitness(self, data: Data):
+        bitwise_score = 0
+        
+        for i in range(self.gen_len):
+            if self.gen[i] == self.target[i]:
+                bitwise_score += 50
+            else:
+                score = ord(self.target[i]) | ord(self.gen[i])
+                score = bin(~score).count("1")
+                bitwise_score += score
+        return bitwise_score
+        
     def bulls_eye_fitness(self, data: Data):
-        target = list("Hello, world!")
         score = 0
 
         for i in range(self.gen_len):
-            if self.gen[i] == target[i]:
+            if self.gen[i] == self.target[i]:
                 score += 1
 
         for i in range(self.gen_len):
-            if self.gen[i] == target[i]:
+            if self.gen[i] == self.target[i]:
                 score += 10
-            elif self.gen[i] in target:
+            elif self.gen[i] in self.target:
                 score += 5
 
         # bulls_eye_score = data.age_factor * self.age + (1 - data.age_factor) * score

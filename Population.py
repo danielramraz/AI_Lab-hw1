@@ -13,7 +13,7 @@ import CrossoverOperator
 import ParentOperator
 from Data import Data
 MUTATION_INDIVIDUALS = 10
-ELITE_PERCENTAGE = 0.50
+ELITE_PERCENTAGE = 0.20
 
 
 class Population:
