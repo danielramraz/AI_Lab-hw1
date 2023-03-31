@@ -27,7 +27,7 @@ class BinPackingIndividual(Individual):
         copy_objects = objects.copy()
                                                                         # how many bins to start with ?
         # num_bins = len(copy_objects)                                  # as many as the objects
-        num_bins = int(2*(np.sum(copy_objects)/self.max_weight))        # K times the lower bound (average weight)
+        num_bins = int(1.5*(np.sum(copy_objects)/self.max_weight))        # K times the lower bound (average weight)
         # num_bins = int(1.5 * self.best_solution)                      # K times the best solution
 
         # bins_list = []
@@ -54,7 +54,8 @@ class BinPackingIndividual(Individual):
             # print(f"rand_index is {rand_objects_index}")
             gen[gen_index].append(copy_objects[rand_objects_index])
             copy_objects.pop(rand_objects_index)
-            gen_index = (gen_index + 1) % num_bins
+            rand_int = random.randint(1, 100)
+            gen_index = (gen_index + rand_int) % num_bins
 
         # print(gen)
         return gen
@@ -62,9 +63,9 @@ class BinPackingIndividual(Individual):
     def original_fitness(self, data: Data):             ################
         score = 0
         # illegal_bins = 0
-        over_weight_punishment = 10
-        empty_bin_score = 10
-
+        over_weight_punishment = 1000000
+        empty_bin_score = 100
+        under_wieght_punishment = 10   
         for i in range(self.gen_len):
             bin_is_over_wieght = sum(self.gen[i]) > self.max_weight
             bin_is_empty = not bool(self.gen[i])
@@ -80,7 +81,7 @@ class BinPackingIndividual(Individual):
 
             else:                                                               #punishment for empty space in the bin
                 under_weight_deviation = self.max_weight - sum(self.gen[i])
-                # score -= under_wieght_deviation
+                score -= under_weight_deviation **2 # under_wieght_punishment
 
 
         # if illegal_bins > 0:
@@ -101,11 +102,27 @@ class BinPackingIndividual(Individual):
             object = random.sample(copy_objects, 1)[0]
             for bin in range(len(self.gen)):
                 if object in self.gen[bin]:
+                    while object + sum(self.gen[random_bin])>self.max_weight :
+                        random_bin = random.randint(0, self.gen_len-1)
                     self.gen[bin].remove(object)
                     copy_objects.remove(object)
                     self.gen[random_bin].append(object)
                     break
+
+        # copy_gen = self.gen.copy()
+        # lowest_bin = self.max_weight
+        # lowest_bin_index:int
+        # for bin, index in copy_gen:
+        #     if sum(bin) < lowest_bin:
+        #         lowest_bin = sum(bin)
+        #         lowest_bin_index = index
+
+        # for object in copy_gen[lowest_bin_index]:
+        #     while 
+
         return
+    
+
 
     # Calculates the difference between the amount of full cells in the current gene and every other gene in the population
     def genetic_diversification_distance(self, population: list):

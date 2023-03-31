@@ -39,35 +39,46 @@ class CrossoverOperator:
             child_gen = self.cx_shuffle(parent1, parent2, num_genes)
 
         elif operator == self.BIN_PACKING:
-            child_gen = []
-            ran = random.random()
-            copy_objects = parent1.objects.copy()
-            size_gen = len(copy_objects)
+            child_gen = self.bin_packing_cross(parent1, parent2, num_genes)
+        
+        return child_gen
+        
+    def bin_packing_cross(self, parent1: Individual, parent2: Individual, num_genes: int):
+        child_gen = []
+        ran = random.random()
+        copy_objects = parent1.objects.copy()
+        size_gen = len(copy_objects)
 
-            # fill child with empty bins
-            for i in range(size_gen):
-                child_gen.append([])
+        # fill child with empty bins
+        for i in range(size_gen):
+            child_gen.append([])
 
-            parent1_part = int(len(copy_objects)*ran)
-            parent2_part = len(copy_objects) - parent1_part
+        parent1_part = int(len(copy_objects)*ran)
+        parent2_part = len(copy_objects) - parent1_part
 
-            for i in range(parent1_part):
-                object = random.sample(copy_objects, 1)[0]
-                for bin in range(len(parent1.gen)):
-                    if object in parent1.gen[bin]:
-                        child_gen[bin].append(object)
-                        copy_objects.remove(object)
-                        break
+        for i in range(parent1_part):
+            object = random.sample(copy_objects, 1)[0]
+            for bin in range(len(parent1.gen)):
+                if object in parent1.gen[bin]:
+                    while object + sum(child_gen[bin])>parent1.max_weight:
+                        bin = random.randint(0, size_gen-1)
+                    child_gen[bin].append(object)
+                    copy_objects.remove(object)
+                    break
 
-            for i in range(parent2_part):
-                object = random.sample(copy_objects, 1)[0]
-                for bin in range(len(parent2.gen)):
-                    if object in parent2.gen[bin]:
-                        child_gen[bin].append(object)
-                        copy_objects.remove(object)
-                        break
+        for i in range(parent2_part):
+            object = random.sample(copy_objects, 1)[0]
+            for bin in range(len(parent2.gen)):
+                if object in parent2.gen[bin]:
+                    while object + sum(child_gen[bin])>parent2.max_weight:
+                        bin = random.randint(0, size_gen-1)
+                    child_gen[bin].append(object)
+                    copy_objects.remove(object)
+                    break
 
         return child_gen
+
+
 
     def pmx_shuffle(self, parent1: Individual, parent2: Individual, num_genes: int):
         p1 = parent1.gen
