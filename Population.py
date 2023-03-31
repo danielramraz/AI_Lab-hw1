@@ -12,6 +12,7 @@ import math
 import CrossoverOperator
 import ParentOperator
 from Data import Data
+
 MUTATION_INDIVIDUALS = 10
 ELITE_PERCENTAGE = 0.20
 
@@ -63,8 +64,8 @@ class Population:
             gen_time = time.time()  # information
             print("=========================================")
             print(f"Average for this gen is {new_average}")
-            print(f"Selection Pressure for this gen is {new_variance}")
-            self.show_histogram(self.fitnesses)
+            # print(f"Selection Pressure for this gen is {new_variance}")
+            # self.show_histogram(self.fitnesses)
 
             # Select the best individuals for reproduction
             elite_size = int(self.data.pop_size * ELITE_PERCENTAGE)  # exploitation
@@ -117,9 +118,9 @@ class Population:
 
             special = self.population[0].genetic_diversification_special(self.population)
 
-            print("The genetic diversification distance for this gen is:", distance)
-            print("The genetic diversification special for this gen is:", special)
-            print(f"The absolute time for this gen is {time.time() - gen_time} sec")
+            # print("The genetic diversification distance for this gen is:", distance)
+            # print("The genetic diversification special for this gen is:", special)
+            # print(f"The absolute time for this gen is {time.time() - gen_time} sec")
             print(f"The ticks time for this gen is {int(time.perf_counter())}")
 
         # Find the individual with the highest fitness
@@ -130,7 +131,6 @@ class Population:
                 self.best_individual = individual
 
         self.best_fitness = self.best_individual.score
-
         return
 
     def average_fitness(self, fitness: list):  # information
@@ -148,7 +148,7 @@ class Population:
         return
 
     def read_file_bin_packing(self):
-        with open("binpack1.txt") as f:
+        with open("binpack2.txt") as f:
             f.readline()
             f.readline()
             list_info = f.readline().split()
@@ -159,7 +159,6 @@ class Population:
 
             for i in range(num_items):
                 self.objects.append(int(f.readline()))
-
 
 
 

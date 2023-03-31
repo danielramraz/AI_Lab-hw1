@@ -3,6 +3,7 @@ from Individual import Individual
 import Population
 import numpy as np
 
+
 class ParentOperator:
     def __init__(self):
         self.NONE = 0
@@ -19,15 +20,15 @@ class ParentOperator:
             return self.sus(population)
         elif parent_selection_input == self.TOURNAMENT_RANKING:
             return self.tournament_ranking(population)
-        
+
         return
-    
+
     def rws(self, population: list):
         sum_score = self.score_sum(population)
         fitness = self.winsorize(population)
         weight_arr = []
         for index in range(len(fitness)):
-            weight_arr.append(abs(fitness[index]/sum_score))
+            weight_arr.append(abs(fitness[index] / sum_score))
 
         return random.choices(population, weights=weight_arr, k=2)
 
@@ -37,11 +38,11 @@ class ParentOperator:
 
         for index, individual in enumerate(population):
             if index > 0:
-                fitness[index] += fitness[index-1]
+                fitness[index] += fitness[index - 1]
 
         parents = []
         number_of_parents = 2
-        slice_size = int(sum_score/len(population))
+        slice_size = int(sum_score / len(population))
         first_spine_pointer = int(random.uniform(0, slice_size))
         delta = sum_score / number_of_parents
 
@@ -79,7 +80,7 @@ class ParentOperator:
     def winsorize(self, population: list, percentile=5):
         fitneses = []
         for individual in population:
-                fitneses.append(individual.score)
+            fitneses.append(individual.score)
 
         lower_bound = np.percentile(fitneses, percentile)
         upper_bound = np.percentile(fitneses, 100 - percentile)
@@ -87,7 +88,9 @@ class ParentOperator:
         fitneses = np.where(fitneses > upper_bound, upper_bound, fitneses)
         mean = np.mean(fitneses)
         std = np.std(fitneses)
-        fitneses = (fitneses - mean) / std
+        try:
+            fitneses = (fitneses - mean) / std
+        except:
+            fitneses = 0
+
         return fitneses
-
-

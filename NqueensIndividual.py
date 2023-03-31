@@ -1,3 +1,4 @@
+import numpy as np
 from Individual import Individual
 import Data
 import random
@@ -107,3 +108,19 @@ class NqueensIndividual(Individual):
                 special_permutation.append(item.gen)
 
         return len(special_permutation)
+
+    def kendall_tau_distance(self, population: list):
+
+        dist = 0
+        ndisordered = 0
+        for item in population:
+            i, j = np.meshgrid(np.arange(self.gen_len), np.arange(item.gen_len))
+            a = np.argsort(self.gen)
+            b = np.argsort(item.gen_len)
+            ndisordered = np.logical_or(np.logical_and(a[i] < a[j], b[i] > b[j]),
+                                        np.logical_and(a[i] > a[j], b[i] < b[j])).sum()
+            dist += ndisordered / (self.gen_len * (self.gen_len - 1))
+
+        dist = dist / len(population)  # ask shy???
+
+        return dist
