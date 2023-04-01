@@ -5,7 +5,6 @@ from Individual import Individual
 
 
 class CrossoverOperator:
-
     def __init__(self):
         self.NONE = 0
         self.SINGLE = 1
@@ -77,8 +76,6 @@ class CrossoverOperator:
                     break
 
         return child_gen
-
-
 
     def pmx_shuffle(self, parent1: Individual, parent2: Individual, num_genes: int):
         p1 = parent1.gen

@@ -1,9 +1,7 @@
+from MutationControl import MutationControl
 from StringIndividual import StringIndividual
 from NqueensIndividual import NqueensIndividual
 from BinPackingIndividual import BinPackingIndividual
-# import StringIndividual
-# import NqueensIndividual
-# import BinPackingIndividual
 import time
 import numpy as np
 import matplotlib.pyplot as plt
@@ -51,6 +49,7 @@ class Population:
     def genetic_algorithm(self):
         crossover_op = CrossoverOperator.CrossoverOperator()
         parent_op = ParentOperator.ParentOperator()
+        mutation_op = MutationControl()
 
         for generation in range(self.data.max_generations):
             mutation_individuals = MUTATION_INDIVIDUALS
@@ -61,7 +60,7 @@ class Population:
 
             new_average, new_variance, new_sd = self.average_fitness(self.fitnesses)
 
-            gen_time = time.time()  # information
+            gen_time = time.time()                                  # information
             print("=========================================")
             # print(f"Average for this gen is {new_average}")
             # print(f"Selection Pressure for this gen is {new_variance}")
@@ -91,11 +90,16 @@ class Population:
                 child.gen = child_gen
                 child.gen_len = len(child_gen)
                 child.update_score(self.data)
+#----------------------------------------------------------------
+                mutation_op(child.mutation(self.data), self.data.mutation )          #mutation
 
+
+#----------------------------------------------------------------
                 if new_average == old_average and mutation_individuals > 0:
                     child.mutation(self.data)
                     child.update_score(self.data)
                     mutation_individuals -= 1
+#----------------------------------------------------------------
 
                 offspring.append(child)
 
@@ -133,7 +137,7 @@ class Population:
         self.best_fitness = self.best_individual.score
         return
 
-    def average_fitness(self, fitness: list):  # information
+    def average_fitness(self, fitness: list):               # information
         if not fitness:
             return 0
         average = sum(fitness) / len(fitness)

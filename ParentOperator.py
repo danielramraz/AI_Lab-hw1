@@ -10,7 +10,11 @@ class ParentOperator:
         self.SUS = 2
         self.TOURNAMENT_RANKING = 3
 
-    def parent_selection_function(self, parent_selection_input: int, population: list, elites: list):
+    def parent_selection_function(self, 
+                                  parent_selection_input: int, 
+                                  population: list, 
+                                  elites: list):
+        
         if parent_selection_input == self.NONE:
             return [random.choice(elites), random.choice(elites)]
         elif parent_selection_input == self.RWS:
