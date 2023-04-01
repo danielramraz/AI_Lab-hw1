@@ -23,7 +23,7 @@ class BinPackingIndividual(Individual):
         if self.fitness_function == 0:
             self.score = self.original_fitness(data)
 
-    def init_bins(self, data: Data, objects: list, max_weight: int):    #########
+    def init_bins(self, data: Data, objects: list, max_weight: int):    ############
         copy_objects = objects.copy()
                                                                         # how many bins to start with ?
         # num_bins = len(copy_objects)                                  # as many as the objects
@@ -60,32 +60,24 @@ class BinPackingIndividual(Individual):
         # print(gen)
         return gen
 
-    def original_fitness(self, data: Data):             ################
+    def original_fitness(self, data: Data):                             ############
         score = 0
-        # illegal_bins = 0
         over_weight_punishment = 1000000
         empty_bin_score = 100
         under_wieght_punishment = 10   
         for i in range(self.gen_len):
             bin_is_over_wieght = sum(self.gen[i]) > self.max_weight
             bin_is_empty = not bool(self.gen[i])
-
             if bin_is_empty:                                                    #reword for empty bin
                 score += empty_bin_score
-
             elif bin_is_over_wieght:                                            #punishment for over wieght bin
                 over_weight_deviation = sum(self.gen[i]) - self.max_weight
                 score -= over_weight_deviation * over_weight_punishment
                 # score -= over_wieght_punishment       
                 # illegal_bins += 1
-
             else:                                                               #punishment for empty space in the bin
                 under_weight_deviation = self.max_weight - sum(self.gen[i])
                 score -= under_weight_deviation **2 # under_wieght_punishment
-
-
-        # if illegal_bins > 0:
-        # score -= illegal_bins * 10
 
         normalized_age = self.age / data.max_age
         age_score = 1 - normalized_age
@@ -93,7 +85,16 @@ class BinPackingIndividual(Individual):
 
         return score
 
-    def mutation(self, data: Data):                     ############
+    def jankovic_fitness(self, data: Data):
+        score = 0
+        k :float = 2                        #constant greater then 1
+        for i in range(self.gen_len):
+            sum_of_relative_fill = sum(self.gen[i]) / self.max_weight
+        clean_gen_sol = list(filter(None, self.gen))
+        score = (sum_of_relative_fill / len(clean_gen_sol))** k
+        return score
+
+    def mutation(self, data: Data):                                     ############
         copy_objects = self.objects.copy()
         num_objects_change = random.randint(0, len(copy_objects))
 
@@ -122,8 +123,6 @@ class BinPackingIndividual(Individual):
 
         return
     
-
-
     # Calculates the difference between the amount of full cells in the current gene and every other gene in the population
     def genetic_diversification_distance(self, population: list):
         dist = 0
