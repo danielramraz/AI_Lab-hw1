@@ -1,5 +1,5 @@
-from StringIndividual import StringIndividual
-from NqueensIndividual import NqueensIndividual
+# from StringIndividual import StringIndividual
+# from NqueensIndividual import NqueensIndividual
 from BinPackingIndividual import BinPackingIndividual
 # import StringIndividual
 # import NqueensIndividual
@@ -13,7 +13,7 @@ import CrossoverOperator
 import ParentOperator
 from Data import Data
 
-MUTATION_INDIVIDUALS = 10
+MUTATION_INDIVIDUALS = 20
 ELITE_PERCENTAGE = 0.20
 
 
@@ -52,6 +52,11 @@ class Population:
         crossover_op = CrossoverOperator.CrossoverOperator()
         parent_op = ParentOperator.ParentOperator()
 
+        x1 = []
+        y1 = []
+        ax = plt.axes()
+        ax.set(xlim=(0, 200), ylim=(-4000, 100), xlabel='Generation number', ylabel='Average fitness')
+
         for generation in range(self.data.max_generations):
             mutation_individuals = MUTATION_INDIVIDUALS
 
@@ -64,9 +69,10 @@ class Population:
             gen_time = time.time()  # information
             print("=========================================")
             print(f"Average for this gen is {new_average}")
-            # print(f"Selection Pressure for this gen is {new_variance}")
+            print(f"Selection Pressure for this gen is {new_variance}")
             # self.show_histogram(self.fitnesses)
-
+            x1.append(generation)
+            y1.append(new_average/100)
             # Select the best individuals for reproduction
             elite_size = int(self.data.pop_size * ELITE_PERCENTAGE)  # exploitation
             elite_indices = sorted(range(self.data.pop_size), key=lambda i: self.fitnesses[i], reverse=True)[:elite_size]
@@ -92,9 +98,26 @@ class Population:
                 child.gen_len = len(child_gen)
                 child.update_score(self.data)
 
-                if new_average == old_average and mutation_individuals > 0:
-                    child.mutation(self.data)
-                    child.update_score(self.data)
+                if generation % 20 == 0:
+                    # Find the individual with the best fitness
+                    best_individual = self.population[0]
+                    for individual in self.population:
+                        if best_individual.score < individual.score:
+                            best_individual = individual
+                    best_individual.mutation(self.data)
+                    best_individual.update_score(self.data)
+
+                # if new_average == old_average and mutation_individuals > 0:
+                #     # Find the individual with the best fitness
+                #     best_individual = self.population[0]
+                #     for individual in self.population:
+                #         if best_individual.score < individual.score:
+                #             best_individual = individual
+                #     best_individual.mutation(self.data)
+                #     best_individual.update_score(self.data)
+
+                    # child.mutation(self.data)
+                    # child.update_score(self.data)
                     mutation_individuals -= 1
 
                 offspring.append(child)
@@ -115,12 +138,13 @@ class Population:
             distance = 0
             for individual in self.population:
                 distance += individual.genetic_diversification_distance(self.population)
+            distance = distance / len(self.population)
 
             special = self.population[0].genetic_diversification_special(self.population)
 
-            # print("The genetic diversification distance for this gen is:", distance)
-            # print("The genetic diversification special for this gen is:", special)
-            # print(f"The absolute time for this gen is {time.time() - gen_time} sec")
+            print("The genetic diversification distance for this gen is:", distance)
+            print("The genetic diversification special for this gen is:", special)
+            print(f"The absolute time for this gen is {time.time() - gen_time} sec")
             print(f"The ticks time for this gen is {int(time.perf_counter())}")
 
         # Find the individual with the highest fitness
@@ -131,6 +155,9 @@ class Population:
                 self.best_individual = individual
 
         self.best_fitness = self.best_individual.score
+        ax.plot(np.array(x1), np.array(y1))
+        plt.show()
+
         return
 
     def average_fitness(self, fitness: list):  # information
@@ -148,7 +175,7 @@ class Population:
         return
 
     def read_file_bin_packing(self):
-        with open("binpack2.txt") as f:
+        with open("binpack1.txt") as f:
             f.readline()
             f.readline()
             list_info = f.readline().split()
@@ -159,6 +186,3 @@ class Population:
 
             for i in range(num_items):
                 self.objects.append(int(f.readline()))
-
-
-

@@ -11,7 +11,7 @@ class BinPackingIndividual(Individual):
         self.objects = objects.copy()
         self.max_weight = max_weight
         self.best_solution = best_solution
-        self.gen = self.init_bins(data,  self.objects, self.max_weight)
+        self.gen = self.init_bins(data, self.objects, self.max_weight)
         self.gen_len = len(self.gen)
         self.age = 0
         self.score = 0
@@ -23,98 +23,106 @@ class BinPackingIndividual(Individual):
         if self.fitness_function == 0:
             self.score = self.original_fitness(data)
 
-    def init_bins(self, data: Data, objects: list, max_weight: int):    #########
+    def init_bins(self, data: Data, objects: list, max_weight: int):
         copy_objects = objects.copy()
-                                                                        # how many bins to start with ?
-        # num_bins = len(copy_objects)                                  # as many as the objects
-        num_bins = int(2*(np.sum(copy_objects)/self.max_weight))        # K times the lower bound (average weight)
-        # num_bins = int(1.5 * self.best_solution)                      # K times the best solution
-
-        # bins_list = []
+        num_bins = int(1.5 * (np.sum(copy_objects) / self.max_weight))
         gen = []
 
-        for i in range(num_bins):                               #init the gen with empty num_bins
+        for i in range(num_bins):  # init the gen with empty num_bins
             gen.append([])
-            # bins_list.append(i)
-
-        # while copy_objects:                                          
-        #     num_object_in_bin = random.randint(1, len(copy_objects))
-        #     bin = random.sample(bins_list, 1)[0]
-        #     bins_list.remove(bin)
-        #     for i in range(num_object_in_bin):
-        #         object = random.sample(copy_objects, 1)[0]
-        #         gen[bin].append(object)
-        #         # removing objects that been chosen
-        #         copy_objects.remove(object)
 
         gen_index = 0
-        while copy_objects:                                         # insert objects to bins randomly but uniformly
-            # print(f"copy objects len is {len(copy_objects)}")
-            rand_objects_index = random.randint(0, len(copy_objects)-1)
-            # print(f"rand_index is {rand_objects_index}")
+        while copy_objects:  # insert objects to bins randomly but uniformly
+            rand_objects_index = random.randint(0, len(copy_objects) - 1)
             gen[gen_index].append(copy_objects[rand_objects_index])
             copy_objects.pop(rand_objects_index)
-            gen_index = (gen_index + 1) % num_bins
+            rand_int = random.randint(1, 100)
+            gen_index = (gen_index + rand_int) % num_bins
 
-        # print(gen)
         return gen
 
-    def original_fitness(self, data: Data):             ################
 
+
+    def original_fitness(self, data: Data):
+        # #------------------------------------------
+        # best_fit = list(filter(None, self.gen))
+        # for bin in best_fit:
+        #     score += (sum(bin) / self.max_weight)
+        #
+        # score = score / len(best_fit)
+        # #----------------------------------------
         score = 0
-        for bin in self.gen:
-            score += (self.max_weight - sum(bin)) ** 2
+        over_weight_punishment = 10000
+        empty_bin_score = 100
 
-        score = score * -1
-        # # DANI
-        # score = 0
-        # # illegal_bins = 0
-        # over_weight_punishment = 10
-        # empty_bin_score = 10
-        #
-        # for i in range(self.gen_len):
-        #     bin_is_over_wieght = sum(self.gen[i]) > self.max_weight
-        #     # bin_is_empty = not bool(self.gen[i])
-        #     bin_is_empty = 0
-        #
-        #     if bin_is_empty:                                                    #reword for empty bin
-        #         score += empty_bin_score
-        #
-        #     elif bin_is_over_wieght:                                            #punishment for over wieght bin
-        #         over_weight_deviation = sum(self.gen[i]) - self.max_weight
-        #         score -= over_weight_deviation * over_weight_punishment
-        #         # score -= over_wieght_punishment
-        #         # illegal_bins += 1
-        #
-        #     else:                                                               #punishment for empty space in the bin
-        #         under_weight_deviation = self.max_weight - sum(self.gen[i])
-        #         # score -= under_wieght_deviation
-        #
-        #
-        # # if illegal_bins > 0:
-        # # score -= illegal_bins * 10
+        for i in range(self.gen_len):
+            bin_is_over_wieght = sum(self.gen[i]) > self.max_weight
+            bin_is_empty = not bool(self.gen[i])
 
-        # normalized_age = self.age / data.max_age
-        # age_score = 1 - normalized_age
-        # score = (1 - data.age_factor) * score + data.age_factor * age_score
+            if bin_is_empty:  # reword for empty bin
+                score += empty_bin_score
+
+            elif bin_is_over_wieght:  # punishment for over wieght bin
+                over_weight_deviation = sum(self.gen[i]) - self.max_weight
+                score -= over_weight_deviation * over_weight_punishment
+                # score -= over_wieght_punishment
+                # illegal_bins += 1
+
+            else:  # punishment for empty space in the bin
+                under_weight_deviation = self.max_weight - sum(self.gen[i])
+                score -= under_weight_deviation ** 2  # under_wieght_punishment
+
+        # if illegal_bins > 0:
+        # score -= illegal_bins * 10
+
+        normalized_age = self.age / data.max_age
+        age_score = 1 - normalized_age
+        score = (1 - data.age_factor) * score + data.age_factor * age_score
 
         return score
 
-    def mutation(self, data: Data):                     ############
+    def mutation(self, data: Data):
 
-        copy_objects = self.objects.copy()
-        num_objects_change = random.randint(0, len(copy_objects))
+        max_try = len(self.objects)*2
 
-        for i in range(num_objects_change):
-            random_bin = random.randint(0, len(self.gen) - 1)
-            object = random.sample(copy_objects, 1)[0]
-            for bin in range(len(self.gen)):
-                if object in self.gen[bin]:
-                    self.gen[bin].remove(object)
-                    copy_objects.remove(object)
-                    self.gen[random_bin].append(object)
-                    break
+        min_bin = 0
+        min_bin_avr = float('inf')
+        for index, bin in enumerate(self.gen):
+            if len(bin) > 0 and sum(bin)/len(bin) < min_bin_avr:
+                min_bin = index
+                min_bin_avr = sum(bin)/len(bin)
+
+        for object in self.gen[min_bin]:
+            random_bin = random.randint(0, self.gen_len-1)
+            while max_try and(min_bin == random_bin or object + sum(self.gen[random_bin]) > self.max_weight or sum(self.gen[random_bin]) == 0):
+                random_bin = random.randint(0, self.gen_len-1)
+                max_try -= 1
+            if max_try > 0:
+                self.gen[random_bin].append(object)
+        if max_try > 0:
+            self.gen[min_bin] = []
+            self.gen_len = len(self.gen)
+
         return
+        # copy_objects = self.objects.copy()
+        # num_objects_change = random.randint(0, len(copy_objects))
+        #
+        # for i in range(num_objects_change):
+        #     random_bin = random.randint(0, len(self.gen) - 1)
+        #     object = random.sample(copy_objects, 1)[0]
+        #     for bin in range(len(self.gen)):
+        #         if object in self.gen[bin]:
+        #             while object + sum(self.gen[random_bin]) > self.max_weight:
+        #                 random_bin = random.randint(0, self.gen_len - 1)
+        #             self.gen[bin].remove(object)
+        #             copy_objects.remove(object)
+        #             self.gen[random_bin].append(object)
+        #             break
+
+        return
+
+
+
 
     # Calculates the difference between the amount of full cells in the current gene and every other gene in the population
     def genetic_diversification_distance(self, population: list):
@@ -129,9 +137,10 @@ class BinPackingIndividual(Individual):
             for item in individual.gen:
                 if sum(item) >= self.max_weight:
                     full_cells_item += 1
-                dist += abs(full_cells_self-full_cells_item)
+                dist += abs(full_cells_self - full_cells_item)
                 full_cells_item = 0
 
+        dist = dist / len(population)
         return dist
 
     # Calculates the number of unique individual by number of full cells
@@ -184,8 +193,7 @@ class BinPackingIndividual(Individual):
             if sum(item) > self.max_weight:
                 bad_bins += 1
 
-        # print("Best individual:", best_fit)
-        # print("NUM bins:", len(best_fit))
-        # print("BAD bins:", bad_bins)
-
-        return best_fit
+        print("Best individual:", best_fit)
+        print("NUM bins:", len(best_fit))
+        print("BAD bins:", bad_bins)
+        return

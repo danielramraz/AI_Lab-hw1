@@ -66,22 +66,6 @@ class NqueensIndividual(Individual):
 
     # Calculates the amount of swap to get from the current gene to every other gene in the population
     def genetic_diversification_distance(self, population: list):
-        # swaps = 0
-        # temp_gen = self.gen
-        # for individual in population:
-        #     temp_gen = self.gen
-        #     for i in range(self.gen_len):
-        #         for j in range(individual.gen_len):
-        #             if individual.gen[j] == temp_gen[i]:
-        #                 swaps += abs(j-i)
-        #                 for k in range(swaps):
-        #                     index = temp_gen.index(temp_gen[i])
-        #                     if index != len(temp_gen)-1:
-        #                         temp = temp_gen[index+1]
-        #                         temp_gen[index+1] = temp_gen[index]
-        #                         temp_gen[index] = temp
-        #
-        # return swaps
         dist = 0
         conflict_self = 0
         conflict_item = 0
@@ -98,6 +82,7 @@ class NqueensIndividual(Individual):
             dist += abs(conflict_self-conflict_item)
             conflict_item = 0
 
+        dist = dist / len(population)
         return dist
 
     # Calculates the number of unique promotions
