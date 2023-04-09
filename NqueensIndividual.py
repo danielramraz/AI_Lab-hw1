@@ -81,6 +81,7 @@ class NqueensIndividual(Individual):
 
         dist = dist / len(population)
 
+        dist = dist / len(population)
         return dist
 
         # dist = 0

@@ -89,6 +89,7 @@ class StringIndividual(Individual):
                 if item.gen[index] != self.gen[index]:
                     dist += 1
 
+        dist = dist / len(population)
         return dist
 
     def genetic_diversification_special(self, population: list):

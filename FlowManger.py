@@ -17,6 +17,8 @@ class FlowManger:
     def show_result(self):
         print("==============Final Result==================")
         self.print_time()
+        # print("Best individual:", self.population.best_individual.gen)
+        # print("Best fitness:", self.population.best_individual.score)
 
         # bad_bins = 0
         # self.population.best_individual.gen = list(filter(None, self.population.best_individual.gen))

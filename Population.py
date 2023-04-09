@@ -74,6 +74,7 @@ class Population:
             print("=========================================")
             print(f"Average for this gen is {new_average}")
             print(f"Selection Pressure for this gen is {new_variance}")
+            print(f"Selection Pressure for this gen is {new_variance}")
             # self.show_histogram(self.fitnesses)
             # x1.append(generation)
             # y1.append(new_average/100)
