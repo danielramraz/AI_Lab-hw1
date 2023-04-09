@@ -61,7 +61,6 @@ class PopulationLab2:
             # ----------- Clustering -----------
             clusters = Clustering.clustering(self.population)
             self.niches = []
-            print("K: ", len(clusters))
             for cluster in clusters:
                 print(len(cluster))
                 niche = Niche.Niche(cluster)
@@ -97,7 +96,7 @@ class PopulationLab2:
                     self.population.remove(individual)
 
             # Update the size of the  population
-            # self.data.pop_size = len(self.population)
+            self.data.pop_size = len(self.population)
 
             # ----------- Genetic Diversification -----------
             distance = 0

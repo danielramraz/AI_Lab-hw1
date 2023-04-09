@@ -8,8 +8,6 @@ def clustering(population: list):
     clusters_per_k = []
     max_clusters = 5
     for k in range(2, max_clusters):
-        print("******************")
-        print("K:", k)
         clusters_centers_update = []
         while True:
             clusters_centers_previous, clusters_previous = knn(k, population, clusters_centers_update)
@@ -64,9 +62,7 @@ def valid_centers(clusters_centers: list):
 
 def update_clusters_centers(clusters_centers: list, clusters: list):
     new_clusters_centers = []
-    print("=========")
     for cluster in clusters:
-        print(len(cluster))
         cluster_fitness_pr = [individual.score * (1/len(cluster)) for individual in cluster]
         expectation = sum(cluster_fitness_pr)
         cluster_fitness = [individual.score - expectation for individual in cluster]

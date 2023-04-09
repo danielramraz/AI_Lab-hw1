@@ -59,7 +59,6 @@ class Niche:
         offspring = []
         parents_next_generation = []
         niche_size = len(self.individuals)
-        print("niche_size:", niche_size)
         while len(offspring) + len(parents_next_generation) < niche_size:
             # ----------- Parent Selection -----------
             parents = ParentOperator.parent_selection_function(data.parent_selection, self.individuals, [])
