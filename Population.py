@@ -49,16 +49,16 @@ class Population:
     def genetic_algorithm(self):
         crossover_op = CrossoverOperator.CrossoverOperator()
         parent_op = ParentOperator.ParentOperator()
-        mutation_op = MutationControl()
+        mutation_control = MutationControl(self.data, self.average_fitness(self.fitnesses))
 
-        for generation in range(self.data.max_generations):
+        for generation,generation_index in range(self.data.max_generations):
             mutation_individuals = MUTATION_INDIVIDUALS
 
-            old_average, old_variance, old_sd = self.average_fitness(self.fitnesses)
+            # old_average, old_variance, old_sd = self.average_fitness(self.fitnesses)
             for index, individual in enumerate(self.population):
                 self.fitnesses[index] = individual.score
 
-            new_average, new_variance, new_sd = self.average_fitness(self.fitnesses)
+            # new_average, new_variance, new_sd = self.average_fitness(self.fitnesses)
 
             gen_time = time.time()                                  # information
             print("=========================================")
@@ -91,7 +91,10 @@ class Population:
                 child.gen_len = len(child_gen)
                 child.update_score(self.data)
 #----------------------------------------------------------------
-                mutation_op(child.mutation(self.data), self.data.mutation )          #mutation
+                mutation_control(generation_index,
+                            child.mutation(self.data), 
+                            # self.data.mutation,
+                            self.average_fitness(self.fitnesses) )          #mutation
 
 
 #----------------------------------------------------------------
