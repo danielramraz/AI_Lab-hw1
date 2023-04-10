@@ -1,5 +1,6 @@
 # ----------- File For Genetic Algorithm -----------
 from Data import Data
+from MutationControl import MutationControl
 from StringIndividual import StringIndividual
 from NqueensIndividual import NqueensIndividual
 from BinPackingIndividual import BinPackingIndividual
@@ -54,33 +55,31 @@ class Population:
     def genetic_algorithm(self):
         crossover_op = CrossoverOperator.CrossoverOperator()
         parent_op = ParentOperator.ParentOperator()
+        mutation_control = MutationControl(self.data, self.average_fitness(self.fitnesses))
 
         # x1 = []
         # y1 = []
         # ax = plt.axes()
         # ax.set(xlim=(0, 200), ylim=(-4000, 100), xlabel='Generation number', ylabel='Average fitness')
-        mutation_control = MutationControl(self.data, self.average_fitness(self.fitnesses))
 
         for generation,generation_index in range(self.data.max_generations):
             mutation_individuals = MUTATION_INDIVIDUALS
-            old_average, old_variance, old_sd = self.average_fitness(self.fitnesses)
+            # old_average, old_variance, old_sd = self.average_fitness(self.fitnesses)
 
             # ----------- Update Population Fitness  -----------
 
-            # old_average, old_variance, old_sd = self.average_fitness(self.fitnesses)
             for index, individual in enumerate(self.population):
                 self.fitnesses[index] = individual.score
 
             # ----------- Print Fitness Information -----------
-            new_average, new_variance, new_sd = self.average_fitness(self.fitnesses)
-            gen_time = time.time()
             # new_average, new_variance, new_sd = self.average_fitness(self.fitnesses)
 
             gen_time = time.time()                                  # information
             print("=========================================")
-            print(f"Average for this gen is {new_average}")
-            print(f"Selection Pressure for this gen is {new_variance}")
-            print(f"Selection Pressure for this gen is {new_variance}")
+            # print(f"Average for this gen is {new_average}")
+            # print(f"Selection Pressure for this gen is {new_variance}")
+            # print(f"Selection Pressure for this gen is {new_variance}")
+
             # self.show_histogram(self.fitnesses)
             # x1.append(generation)
             # y1.append(new_average/100)
