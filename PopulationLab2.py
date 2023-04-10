@@ -3,6 +3,7 @@ from Data import Data
 from StringIndividual import StringIndividual
 from NqueensIndividual import NqueensIndividual
 from BinPackingIndividual import BinPackingIndividual
+import Individual
 import Clustering
 import Niche
 # ----------- Python Package -----------
@@ -23,6 +24,8 @@ class PopulationLab2:
     data: Data
     population: list
     best_fitness: float
+    center: Individual
+    optimization_func: int
 
     def __init__(self):
         self.data = Data()
@@ -46,6 +49,7 @@ class PopulationLab2:
 
             self.population.append(individual)
 
+        # self.genetic_algorithm()
         return
 
     def genetic_algorithm(self):
@@ -62,7 +66,6 @@ class PopulationLab2:
             clusters = Clustering.clustering(self.population)
             self.niches = []
             for cluster in clusters:
-                print(len(cluster))
                 niche = Niche.Niche(cluster)
                 niche.update_score_share()
                 self.niches.append(niche)
@@ -107,14 +110,6 @@ class PopulationLab2:
                 special = niche.individuals[0].genetic_diversification_special(niche.individuals)
                 print(f"The genetic diversification distance for niche {index} is: {distance}")
                 print(f"The genetic diversification special for niche {index} is: {special}")
-
-            # for individual in self.population:
-            #     distance += individual.genetic_diversification_distance(self.population)
-            # distance = distance / len(self.population)
-            # special = self.population[0].genetic_diversification_special(self.population)
-            #
-            # print("The genetic diversification distance for this gen is:", distance)
-            # print("The genetic diversification special for this gen is:", special)
 
             # ----------- Print Time Information -----------
             print(f"The absolute time for this gen is {time.time() - gen_time} sec")

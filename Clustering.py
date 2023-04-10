@@ -19,11 +19,11 @@ def clustering(population: list):
         clusters_per_k.append(clusters_update)
         silhouette_score = silhouette(clusters_centers_update, clusters_update)
         silhouette_per_k.append(silhouette_score)
-        # elbow_score = inertia(clusters_centers_update, clusters_update)
-        # elbow_method_per_k.append(elbow_score)
+        elbow_score = inertia(clusters_centers_update, clusters_update)
+        elbow_method_per_k.append(elbow_score)
 
     max_silhouette_index = silhouette_per_k.index(max(silhouette_per_k))
-    # min_elbow_index = elbow_method_per_k.index(min(elbow_method_per_k))
+    min_elbow_index = elbow_method_per_k.index(min(elbow_method_per_k))
 
     return clusters_per_k[max_silhouette_index]
 
@@ -38,13 +38,20 @@ def knn(k: int, population: list, clusters_centers: list):
             clusters_centers = random.sample(population, k)
             if valid_centers(clusters_centers):
                 break
-
     for individual in population:
         dist = [individual.distance_func(center, True) for center in clusters_centers]
-        closest_center_index = dist.index(min(dist))
-        clusters[closest_center_index].append(individual)
+        min_dist_centers = []
+        for index, center in enumerate(clusters_centers):
+            if dist[index] == min(dist):
+                min_dist_centers.append((index, center))
+
+        closest_center = random.sample(min_dist_centers, 1)[0]
+        clusters[closest_center[0]].append(closest_center[1])
+        # closest_center_index = dist.index(min(dist))
+        # clusters[closest_center_index].append(individual)
 
     return clusters_centers, clusters
+
 
 def valid_centers(clusters_centers: list):
 
@@ -57,7 +64,6 @@ def valid_centers(clusters_centers: list):
             if count > 1:
                 return False
     return True
-
 
 
 def update_clusters_centers(clusters_centers: list, clusters: list):
@@ -111,7 +117,7 @@ def silhouette(clusters_centers: list, clusters: list):
         silhouette_for_cluster = sum(silhouette_score_cluster) / len(cluster)
         silhouette_score_all_clusters.append(silhouette_for_cluster)
 
-    # The overall silhouette score for the clustering solution is the
+    # The overall silhouette score for the clustering solution
     silhouette_score = sum(silhouette_score_all_clusters) / len(clusters)
     return silhouette_score
 

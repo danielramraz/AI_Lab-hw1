@@ -81,11 +81,10 @@ class Niche:
             child.gen_len = len(child_gen)
 
             # ----------- Mutation -----------
+            child.mutation(data)
+            child.update_score(data)
 
             # ----------- Crowding -----------
-            # offspring.append(parent1)
-            # offspring.append(parent2)
-            # offspring = self.crowding(child, parent1, parent2, offspring,)
             parents_next_generation = self.crowding(child, parent1, parent2, offspring, parents_next_generation, niche_size)
             offspring.append(child)
 

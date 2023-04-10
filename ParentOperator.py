@@ -7,13 +7,6 @@ RWS = 1
 SUS = 2
 TOURNAMENT_RANKING = 3
 
-# class ParentOperator:
-#     def __init__(self):
-#         self.NONE = 0
-#         self.RWS = 1
-#         self.SUS = 2
-#         self.TOURNAMENT_RANKING = 3
-
 
 def parent_selection_function(parent_selection_input: int, population: list, elites: list):
     if parent_selection_input == NONE:
