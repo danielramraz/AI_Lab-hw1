@@ -31,25 +31,18 @@ class BinPackingIndividual(Individual):
             self.score = self.original_fitness(data)
 
     def init_bins(self, data: Data, objects: list, max_weight: int):
-    def init_bins(self, data: Data, objects: list, max_weight: int):
         copy_objects = objects.copy()
-        num_bins = int(1.5 * (np.sum(copy_objects) / self.max_weight))
         num_bins = int(1.5 * (np.sum(copy_objects) / self.max_weight))
         gen = []
 
-        for i in range(num_bins):  # init the gen with empty num_bins
         for i in range(num_bins):  # init the gen with empty num_bins
             gen.append([])
 
         gen_index = 0
         while copy_objects:  # insert objects to bins randomly but uniformly
             rand_objects_index = random.randint(0, len(copy_objects) - 1)
-        while copy_objects:  # insert objects to bins randomly but uniformly
-            rand_objects_index = random.randint(0, len(copy_objects) - 1)
             gen[gen_index].append(copy_objects[rand_objects_index])
             copy_objects.pop(rand_objects_index)
-            rand_int = random.randint(1, 100)
-            gen_index = (gen_index + rand_int) % num_bins
             rand_int = random.randint(1, 100)
             gen_index = (gen_index + rand_int) % num_bins
 
