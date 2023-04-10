@@ -1,6 +1,11 @@
+# ----------- File Form Lab -----------
 from Individual import Individual
 import Data
+# ----------- Python Package -----------
+import numpy as np
 import random
+# ----------- Consts Name  -----------
+ORIGINAL_FIT = 0
 
 
 class NqueensIndividual(Individual):
@@ -14,7 +19,7 @@ class NqueensIndividual(Individual):
         self.update_score(data)
 
     def update_score(self, data: Data):
-        if self.fitness_function == 0:
+        if self.fitness_function == ORIGINAL_FIT:
             self.score = self.original_fitness(data)
 
     def original_fitness(self, data: Data):
@@ -65,39 +70,37 @@ class NqueensIndividual(Individual):
 
     # Calculates the amount of swap to get from the current gene to every other gene in the population
     def genetic_diversification_distance(self, population: list):
-        # swaps = 0
-        # temp_gen = self.gen
-        # for individual in population:
-        #     temp_gen = self.gen
-        #     for i in range(self.gen_len):
-        #         for j in range(individual.gen_len):
-        #             if individual.gen[j] == temp_gen[i]:
-        #                 swaps += abs(j-i)
-        #                 for k in range(swaps):
-        #                     index = temp_gen.index(temp_gen[i])
-        #                     if index != len(temp_gen)-1:
-        #                         temp = temp_gen[index+1]
-        #                         temp_gen[index+1] = temp_gen[index]
-        #                         temp_gen[index] = temp
-        #
-        # return swaps
         dist = 0
-        conflict_self = 0
-        conflict_item = 0
-        for i in range(self.gen_len):
-            for j in range(self.gen_len):
-                if i != j and abs(i - j) == abs(self.gen[i] - self.gen[j]):
-                    conflict_self += 1
-
         for item in population:
-            for i in range(self.gen_len):
-                for j in range(self.gen_len):
-                    if i != j and abs(i - j) == abs(self.gen[i] - self.gen[j]):
-                        conflict_item += 1
-            dist += abs(conflict_self-conflict_item)
-            conflict_item = 0
+            i, j = np.meshgrid(np.arange(self.gen_len), np.arange(item.gen_len))
+            a = np.argsort(self.gen)
+            b = np.argsort(item.gen)
+            ndisordered = np.logical_or(np.logical_and(a[i] < a[j], b[i] > b[j]),
+                                        np.logical_and(a[i] > a[j], b[i] < b[j])).sum()
+            dist += ndisordered / (self.gen_len * (self.gen_len - 1))
 
+        dist = dist / len(population)
+
+        dist = dist / len(population)
         return dist
+
+        # dist = 0
+        # conflict_self = 0
+        # conflict_item = 0
+        # for i in range(self.gen_len):
+        #     for j in range(self.gen_len):
+        #         if i != j and abs(i - j) == abs(self.gen[i] - self.gen[j]):
+        #             conflict_self += 1
+        #
+        # for item in population:
+        #     for i in range(self.gen_len):
+        #         for j in range(self.gen_len):
+        #             if i != j and abs(i - j) == abs(self.gen[i] - self.gen[j]):
+        #                 conflict_item += 1
+        #     dist += abs(conflict_self-conflict_item)
+        #     conflict_item = 0
+        #
+        # return dist
 
     # Calculates the number of unique promotions
     def genetic_diversification_special(self, population: list):
@@ -107,3 +110,35 @@ class NqueensIndividual(Individual):
                 special_permutation.append(item.gen)
 
         return len(special_permutation)
+
+    def distance_func(self, population, for_individual: bool):
+        if for_individual:
+            return self.kendall_tau_distance_individual(population)
+        else:
+            return self.kendall_tau_distance(population)
+
+    def kendall_tau_distance(self, population: list):
+        dist = 0
+        for item in population:
+            i, j = np.meshgrid(np.arange(self.gen_len), np.arange(item.gen_len))
+            a = np.argsort(self.gen)
+            b = np.argsort(item.gen)
+            ndisordered = np.logical_or(np.logical_and(a[i] < a[j], b[i] > b[j]),
+                                        np.logical_and(a[i] > a[j], b[i] < b[j])).sum()
+            dist += ndisordered / (self.gen_len * (self.gen_len - 1))
+
+        dist = dist / len(population)
+
+        return dist
+
+    def kendall_tau_distance_individual(self, ind: Individual):
+
+        i, j = np.meshgrid(np.arange(self.gen_len), np.arange(ind.gen_len))
+        a = np.argsort(self.gen)
+        b = np.argsort(ind.gen)
+        ndisordered = np.logical_or(np.logical_and(a[i] < a[j], b[i] > b[j]),
+                                    np.logical_and(a[i] > a[j], b[i] < b[j])).sum()
+        dist = ndisordered / (self.gen_len * (self.gen_len - 1))
+
+        return dist
+
