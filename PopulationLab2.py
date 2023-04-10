@@ -1,5 +1,6 @@
 # ----------- File For Genetic Algorithm -----------
 from Data import Data
+from MutationControl import MutationControl
 from StringIndividual import StringIndividual
 from NqueensIndividual import NqueensIndividual
 from BinPackingIndividual import BinPackingIndividual
@@ -23,18 +24,26 @@ class PopulationLab2:
     data: Data
     population: list
     best_fitness: float
+    fitnesses: list
 
     def __init__(self):
         self.data = Data()
         self.population = []
+        self.fitnesses = []
         self.best_individual = 0
         self.best_fitness = 0
         self.max_weight = 0
         self.objects = []
         self.niches = []
+        
         if self.data.problem == BIN_PACKING:
             self.read_file_bin_packing()
 
+        self.create_population()
+        self.set_fitnesses()
+        return
+    
+    def create_population(self):
         for index in range(self.data.pop_size):
             if self.data.problem == STRING:
                 individual = StringIndividual(self.data)
@@ -45,7 +54,11 @@ class PopulationLab2:
                 self.data.num_genes = int(1.5 * (np.sum(self.objects) / self.max_weight))
 
             self.population.append(individual)
-
+        return
+    
+    def set_fitnesses(self):
+        for individual in self.population:
+            self.fitnesses.append(individual.score)
         return
 
     def genetic_algorithm(self):
@@ -55,21 +68,23 @@ class PopulationLab2:
         # y1 = []
         # ax = plt.axes()
         # ax.set(xlim=(0, 100), ylim=(0, 100), xlabel='Generation number', ylabel='Average fitness')
-
-        for generation in range(self.data.max_generations):
+        
+        mutation_control = MutationControl(self.data, self.average_fitness(self.fitnesses))
+        
+        for generation_index in range(self.data.max_generations):
 
             # ----------- Clustering -----------
-            clusters = Clustering.clustering(self.population)
-            self.niches = []
-            for cluster in clusters:
-                print(len(cluster))
-                niche = Niche.Niche(cluster)
-                niche.update_score_share()
-                self.niches.append(niche)
+            # clusters = Clustering.clustering(self.population)
+            # self.niches = []
+            # for cluster in clusters:
+            #     print(len(cluster))
+            #     niche = Niche.Niche(cluster)
+            #     niche.update_score_share()
+            #     self.niches.append(niche)
 
             # ----------- Print Fitness Information -----------
             gen_time = time.time()
-            print("=========================================")
+            print(f"========================================= {generation_index}")
             for index, niche in enumerate(self.niches):
                 average, variance, sd = self.average_fitness(niche.fitnesses)
                 print(f"Average for niche {index} is {average}")
@@ -79,14 +94,14 @@ class PopulationLab2:
                 # y1.append(average)
 
             # ----------- Generate New Individuals -----------
-            for niche in self.niches:
-                niche.generate_individuals(self.data, self.objects, self.max_weight, self.best_fitness)
+            # for niche in self.niches:
+            #     niche.generate_individuals(self.data, self.objects, self.max_weight, self.best_fitness)
 
             # ----------- Update Population -----------
-            self.population = []
-            for niche in self.niches:
-                for ind in niche.individuals:
-                    self.population.append(ind)
+            # self.population = []
+            # for niche in self.niches:
+            #     for ind in niche.individuals:
+            #         self.population.append(ind)
 
             # Update the age of each individual, if reached max_age - remove from population
             for individual in self.population:
