@@ -4,8 +4,6 @@ import PopulationLab2
 # ----------- Python Package -----------
 import time
 
-
-
 class FlowManger:
     population: PopulationLab2
 
@@ -30,7 +28,7 @@ class FlowManger:
         print("Best fitness:", self.population.best_individual.score)
         # print("BAD bins:", bad_bins)
         # print("num bins:", len(self.population.best_individual.gen))
-
+    
     def print_time(self):
         print(f"the total time for this algo is {time.time() - self.total_time} sec")
         print(f"the ticks time for this algo is {int(time.perf_counter())}")
