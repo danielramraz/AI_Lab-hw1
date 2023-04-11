@@ -30,6 +30,7 @@ class PopulationLab2:
     best_fitness: float
     center: Individual
     optimization_func: int
+    fitnesses: list
 
     def __init__(self):
         self.data = Data()
@@ -98,7 +99,11 @@ class PopulationLab2:
 
             # ----------- Generate New Individuals -----------
             for niche in self.niches:
-                niche.generate_individuals(self.data, self.objects, self.max_weight, self.best_fitness)
+                niche.generate_individuals(self.data, 
+                                           self.objects, 
+                                           self.max_weight, 
+                                           self.best_fitness,
+                                           generation_index)
 
             # ----------- Update Population -----------
             self.population = []
@@ -229,7 +234,7 @@ class PopulationLab2:
         return
 
     def read_file_bin_packing(self):
-        with open("binpack1.txt") as f:
+        with open("BinPackingTests/binpack1.txt") as f:
             f.readline()
             f.readline()
             list_info = f.readline().split()

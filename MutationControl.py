@@ -4,7 +4,7 @@ import Population
 import numpy as np
 from Data import Data
 
-MUTATION_INDIVIDUALS = 50
+MUTATION_INDIVIDUALS = 10
 MUTATION_DECREASE_FACTOR = 1
 MUTATION_LOG_DECREASE_FACTOR = 1.1
 
@@ -36,16 +36,16 @@ class MutationControl:
             self.current_average = new_average_fitness
 
             if self.data.mutation_control_selection == self.NONE:
-                self.mutation_control_0()
+                self.average_const_mutation()
             
             elif self.data.mutation_control_selection == self.const_mutation:
-                self.mutation_control_1()
+                self.const_mutation()
             
             elif self.data.mutation_control_selection == self.Decrease_linearly:
-                self.mutation_control_2()
+                self.decrease_linearly_mutation()
             
             elif self.data.mutation_control_selection == self.Non_Linear_logistic_decay:
-                self.mutation_control_3()
+                self.decrease_non_linearly_mutation()
 
         self.current_generation_index = generation_index 
 
@@ -55,7 +55,7 @@ class MutationControl:
             self.mutation_counter -=1
         return
 
-    def mutation_control_0(self):
+    def average_const_mutation(self):
         if self.current_average == self.last_average:
             self.mutation_counter = MUTATION_INDIVIDUALS
         else:
@@ -63,17 +63,17 @@ class MutationControl:
         # print("mutation control 0")
         return
     
-    def mutation_control_1(self):
+    def const_mutation(self):
         self.mutation_counter = MUTATION_INDIVIDUALS
         # print("mutation control 1")
         return
     
-    def mutation_control_2(self):
+    def decrease_linearly_mutation(self):
         # print(f"mutation_counter {self.mutation_counter}, current_generation_index {self.current_generation_index} ")
         self.mutation_counter = int( MUTATION_INDIVIDUALS - (self.current_generation_index * MUTATION_DECREASE_FACTOR))
         return
     
-    def mutation_control_3(self):
+    def decrease_non_linearly_mutation(self):
         # print(f"mutation_counter {self.mutation_counter}, current_generation_index {self.current_generation_index} ")
         self.mutation_counter = int(MUTATION_INDIVIDUALS - self.current_generation_index ** MUTATION_LOG_DECREASE_FACTOR)
         return
