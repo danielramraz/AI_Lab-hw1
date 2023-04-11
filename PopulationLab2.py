@@ -4,6 +4,7 @@ from MutationControl import MutationControl
 from StringIndividual import StringIndividual
 from NqueensIndividual import NqueensIndividual
 from BinPackingIndividual import BinPackingIndividual
+import Individual
 import ParentOperator
 import CrossoverOperator
 import Clustering
@@ -20,13 +21,15 @@ ELITE_PERCENTAGE = 0.20
 STRING = 0
 N_QUEENS = 1
 BIN_PACKING = 2
-
+SHARED_FIT = 0
+CLUSTER = 1
 
 class PopulationLab2:
     data: Data
     population: list
     best_fitness: float
-    fitnesses: list
+    center: Individual
+    optimization_func: int
 
     def __init__(self):
         self.data = Data()
@@ -40,12 +43,9 @@ class PopulationLab2:
         
         if self.data.problem == BIN_PACKING:
             self.read_file_bin_packing()
+            self.data.num_genes = int(1.5 * (np.sum(self.objects) / self.max_weight))
 
-        self.create_population()
-        self.set_fitnesses()
-        return
-    
-    def create_population(self):
+
         for index in range(self.data.pop_size):
             if self.data.problem == STRING:
                 individual = StringIndividual(self.data)
@@ -53,7 +53,6 @@ class PopulationLab2:
                 individual = NqueensIndividual(self.data)
             elif self.data.problem == BIN_PACKING:
                 individual = BinPackingIndividual(self.data, self.objects.copy(), self.max_weight, self.best_fitness)
-                self.data.num_genes = int(1.5 * (np.sum(self.objects) / self.max_weight))
 
             self.population.append(individual)
         return
@@ -74,13 +73,17 @@ class PopulationLab2:
         for generation_index in range(self.data.max_generations):
 
             # ----------- Clustering -----------
-            clusters = Clustering.clustering(self.population)
+            clusters = Clustering.niche_algorithm(self.population, self.data.niche_algorithm)
+            # clusters = Clustering.clustering(self.population)
             self.niches = []
-            for cluster in clusters:
-                print(len(cluster))
-                niche = Niche.Niche(cluster)
-                niche.update_score_share()
+
+            if self.data.niche_algorithm == SHARED_FIT:
+                niche = Niche.Niche(self.population)
                 self.niches.append(niche)
+            elif self.data.niche_algorithm == CLUSTER:
+                for cluster in clusters:
+                    niche = Niche.Niche(cluster)
+                    self.niches.append(niche)
 
             # ----------- Print Fitness Information -----------
             gen_time = time.time()
@@ -122,14 +125,6 @@ class PopulationLab2:
                 special = niche.individuals[0].genetic_diversification_special(niche.individuals)
                 print(f"The genetic diversification distance for niche {index} is: {distance}")
                 print(f"The genetic diversification special for niche {index} is: {special}")
-
-            # for individual in self.population:
-            #     distance += individual.genetic_diversification_distance(self.population)
-            # distance = distance / len(self.population)
-            # special = self.population[0].genetic_diversification_special(self.population)
-            #
-            # print("The genetic diversification distance for this gen is:", distance)
-            # print("The genetic diversification special for this gen is:", special)
 
             # ----------- Print Time Information -----------
             print(f"The absolute time for this gen is {time.time() - gen_time} sec")

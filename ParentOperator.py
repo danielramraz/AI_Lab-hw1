@@ -7,13 +7,6 @@ RWS = 1
 SUS = 2
 TOURNAMENT_RANKING = 3
 
-# class ParentOperator:
-#     def __init__(self):
-#         self.NONE = 0
-#         self.RWS = 1
-#         self.SUS = 2
-#         self.TOURNAMENT_RANKING = 3
-
 
 def parent_selection_function(parent_selection_input: int, population: list, elites: list):
     if parent_selection_input == NONE:
@@ -92,7 +85,7 @@ def score_sum(population: list):
 def winsorize(population: list, percentile=5):
     fitneses = []
     for individual in population:
-        fitneses.append(individual.score_share)
+        fitneses.append(individual.score)
 
     lower_bound = np.percentile(fitneses, percentile)
     upper_bound = np.percentile(fitneses, 100 - percentile)
