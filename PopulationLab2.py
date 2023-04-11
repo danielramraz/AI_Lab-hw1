@@ -149,18 +149,13 @@ class PopulationLab2:
         return
 
     def old_genetic_algorithm(self):
-        # crossover_op = CrossoverOperator.CrossoverOperator()
-        # parent_op = ParentOperator.ParentOperator()
         mutation_control = MutationControl(self.data, self.average_fitness(self.fitnesses))
 
         for generation_index in range(self.data.max_generations):
-            mutation_individuals = MUTATION_INDIVIDUALS
-            old_average, old_variance, old_sd = self.average_fitness(self.fitnesses)
             # ----------- Update Population Fitness  -----------
             for index, individual in enumerate(self.population):
                 self.fitnesses[index] = individual.score
             # ----------- Print Fitness Information -----------
-            new_average, new_variance, new_sd = self.average_fitness(self.fitnesses)
             gen_time = time.time()                                  
             print(f"========================================= {generation_index}")
             # ----------- Elitism -----------
