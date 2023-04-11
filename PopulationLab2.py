@@ -187,26 +187,11 @@ class PopulationLab2:
                 child_gen = CrossoverOperator.crossover_operator(self.data.cross_operator, parent1, parent2, self.data.num_genes) 
                 child.gen = child_gen
                 child.gen_len = len(child_gen)
-                child.update_score(self.data)
                 # ----------- Mutation -----------
-#----------------------------------------------------------------
-                # mutation_control(generation_index,
-                #             child.mutation(self.data), 
-                #             # self.data.mutation,
-                #             self.average_fitness(self.fitnesses) )         
-#----------------------------------------------------------------
-                if new_average == old_average and mutation_individuals > 0:
-                    # Find the individual with the best fitness
-                    best_individual = self.population[0]
-                    for individual in self.population:
-                        if best_individual.score < individual.score:
-                            best_individual = individual
-                    best_individual.mutation(self.data)
-                    best_individual.update_score(self.data)
-                    child.mutation(self.data)
-                    child.update_score(self.data)
-                    mutation_individuals -= 1
-#----------------------------------------------------------------
+                mutation_control.mutation_selection_function(child, 
+                                                             generation_index, 
+                                                             self.average_fitness(self.fitnesses))
+                child.update_score(self.data)
                 offspring.append(child)
             # ----------- Update Population -----------
             self.population = elites + offspring

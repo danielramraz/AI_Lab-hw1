@@ -1,66 +1,95 @@
 import random
-# from Individual import Individual
-# import Population
+from Individual import Individual
+import Population
 import numpy as np
 from Data import Data
 
-from Individual import Individual
-
-MUTATION_INDIVIDUALS = 10
-MUTATION_FACTOR = 2
-
+MUTATION_INDIVIDUALS = 50
+MUTATION_DECREASE_FACTOR = 1
+MUTATION_LOG_DECREASE_FACTOR = 1.1
 
 class MutationControl:
-    mutation_individuals = MUTATION_INDIVIDUALS
-    mutation_factor = MUTATION_FACTOR
+    # mutation_individuals = MUTATION_INDIVIDUALS
+    # mutation_factor = MUTATION_FACTOR
     
     data: Data
-    max_generations: int
-    current_generation: int
-
+    # max_generations
+    current_generation_index: int
     last_average: float
     current_average: float
+    mutation_counter: int
 
-    
+
     def __init__(self, data: Data, average_fitness):
         self.NONE = 0
         self.const_mutation = 1
         self.Decrease_linearly = 2
         self.Non_Linear_logistic_decay = 3
+
+        self.current_generation_index = 0
+        self.mutation_counter = 0
         self.data = data
         self.current_average = average_fitness[0]
 
-    def mutation_selection_function(self, 
-                                    mutation_control_selection: int, 
-                                    individual: Individual):
+    # def set_counter(self, new_average_fitness, generation_index):
+    #     if generation_index != self.current_generation_index:
+    #         self.mutation_counter = MUTATION_INDIVIDUALS
+    #         self.last_average = self.current_average
+    #         self.current_average = new_average_fitness
 
-        if self.mutation_average_test():
-            return
+    #     self.current_generation_index = generation_index
+    #     return
+    
+    def mutation_selection_function(self, 
+                                    individual: Individual,
+                                    generation_index: int,
+                                    new_average_fitness: float):
         
-        if mutation_control_selection == self.NONE:
-            return self.mutation_control_0(individual)
-        
-        elif mutation_control_selection == self.const_mutation:
-            return self.mutation_control_1(individual)
-        
-        elif mutation_control_selection == self.Decrease_linearly:
-            return self.mutation_control_2(individual)
-        
-        elif mutation_control_selection == self.Non_Linear_logistic_decay:
-            return self.mutation_control_3(individual)
+        # self.set_counter(new_average_fitness, generation_index)
+        if generation_index != self.current_generation_index:
+            self.last_average = self.current_average
+            self.current_average = new_average_fitness
+
+        #-----------------------------
+            if self.data.mutation_control_selection == self.NONE:
+                self.mutation_control_0()
+            
+            elif self.data.mutation_control_selection == self.const_mutation:
+                self.mutation_control_1()
+            
+            elif self.data.mutation_control_selection == self.Decrease_linearly:
+                self.mutation_control_2()
+            
+            elif self.data.mutation_control_selection == self.Non_Linear_logistic_decay:
+                self.mutation_control_3()
+        #-----------------------------
+        self.current_generation_index = generation_index 
+
+        if self.mutation_counter > 0:
+            individual.mutation(self.data)
+            print(f"mutation counter {self.mutation_counter}")
+            self.mutation_counter -=1
+        return
+
+    def mutation_control_0(self):
+        if self.current_average == self.last_average:
+            self.mutation_counter = MUTATION_INDIVIDUALS
+        else:
+            self.mutation_counter = 0
+        print("mutation control 0")
         return
     
-    def mutation_average_test():
+    def mutation_control_1(self):
+        self.mutation_counter = MUTATION_INDIVIDUALS
+        print("mutation control 1")
         return
     
-    def mutation_control_0():
+    def mutation_control_2(self):
+        # print(f"mutation_counter {self.mutation_counter}, current_generation_index {self.current_generation_index} ")
+        self.mutation_counter = int( MUTATION_INDIVIDUALS - (self.current_generation_index * MUTATION_DECREASE_FACTOR))
         return
     
-    def mutation_control_1():
-        return
-    
-    def mutation_control_2():
-        return
-    
-    def mutation_control_3():
+    def mutation_control_3(self):
+        # print(f"mutation_counter {self.mutation_counter}, current_generation_index {self.current_generation_index} ")
+        self.mutation_counter = int(MUTATION_INDIVIDUALS - self.current_generation_index ** MUTATION_LOG_DECREASE_FACTOR)
         return
