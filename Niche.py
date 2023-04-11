@@ -3,6 +3,7 @@ import random
 import Data
 import Individual
 import CrossoverOperator
+from MutationControl import MutationControl
 import ParentOperator
 from StringIndividual import StringIndividual
 from NqueensIndividual import NqueensIndividual
@@ -15,7 +16,6 @@ STRING = 0
 N_QUEENS = 1
 BIN_PACKING = 2
 SIGMA_SHARE = 2
-
 
 class Niche:
     sigma_share: float
@@ -54,7 +54,8 @@ class Niche:
             ind.score_share = ind.score / sum(share_score)
         return
 
-    def generate_individuals(self, data: Data, objects, max_weight, best_fitness):
+    def generate_individuals(self, data: Data, objects, max_weight, best_fitness, generation_index):
+        mutation_control = MutationControl(data, self.average_fitness(self.fitnesses))
 
         offspring = []
         parents_next_generation = []
@@ -94,7 +95,9 @@ class Niche:
             child.gen_len = len(child_gen)
 
             # ----------- Mutation -----------
-            child.mutation(data)
+            mutation_control.mutation_selection_function(child, 
+                                                         generation_index, 
+                                                         self.average_fitness(self.fitnesses))
             child.update_score(data)
 
             # ----------- Crowding -----------
@@ -136,7 +139,10 @@ class Niche:
         self.individuals.remove(worst_individual)
         return
 
-
-
-
-
+    def average_fitness(self, fitness: list):
+        if not fitness:
+            return 0
+        average = sum(fitness) / len(fitness)
+        variance = sum([((x - average) ** 2) for x in fitness]) / (len(fitness) - 1)
+        sd = variance ** 0.5
+        return average, variance, sd

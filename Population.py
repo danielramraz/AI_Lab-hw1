@@ -1,5 +1,6 @@
 # ----------- File For Genetic Algorithm -----------
 from Data import Data
+from MutationControl import MutationControl
 from StringIndividual import StringIndividual
 from NqueensIndividual import NqueensIndividual
 from BinPackingIndividual import BinPackingIndividual
@@ -54,27 +55,31 @@ class Population:
     def genetic_algorithm(self):
         crossover_op = CrossoverOperator.CrossoverOperator()
         parent_op = ParentOperator.ParentOperator()
+        mutation_control = MutationControl(self.data, self.average_fitness(self.fitnesses))
 
         # x1 = []
         # y1 = []
         # ax = plt.axes()
         # ax.set(xlim=(0, 200), ylim=(-4000, 100), xlabel='Generation number', ylabel='Average fitness')
 
-        for generation in range(self.data.max_generations):
+        for generation,generation_index in range(self.data.max_generations):
             mutation_individuals = MUTATION_INDIVIDUALS
-            old_average, old_variance, old_sd = self.average_fitness(self.fitnesses)
+            # old_average, old_variance, old_sd = self.average_fitness(self.fitnesses)
 
             # ----------- Update Population Fitness  -----------
+
             for index, individual in enumerate(self.population):
                 self.fitnesses[index] = individual.score
 
             # ----------- Print Fitness Information -----------
-            new_average, new_variance, new_sd = self.average_fitness(self.fitnesses)
-            gen_time = time.time()
+            # new_average, new_variance, new_sd = self.average_fitness(self.fitnesses)
+
+            gen_time = time.time()                                  # information
             print("=========================================")
-            print(f"Average for this gen is {new_average}")
-            print(f"Selection Pressure for this gen is {new_variance}")
-            print(f"Selection Pressure for this gen is {new_variance}")
+            # print(f"Average for this gen is {new_average}")
+            # print(f"Selection Pressure for this gen is {new_variance}")
+            # print(f"Selection Pressure for this gen is {new_variance}")
+
             # self.show_histogram(self.fitnesses)
             # x1.append(generation)
             # y1.append(new_average/100)
@@ -106,6 +111,12 @@ class Population:
                 child.gen = child_gen
                 child.gen_len = len(child_gen)
                 child.update_score(self.data)
+#----------------------------------------------------------------
+                mutation_control(generation_index,
+                            child.mutation(self.data), 
+                            # self.data.mutation,
+                            self.average_fitness(self.fitnesses) )          #mutation
+
 
                 # ----------- Mutation -----------
                 # if generation % 20 == 0:
@@ -117,6 +128,7 @@ class Population:
                 #     best_individual.mutation(self.data)
                 #     best_individual.update_score(self.data)
                 #     mutation_individuals -= 1
+#----------------------------------------------------------------
                 if new_average == old_average and mutation_individuals > 0:
                     # Find the individual with the best fitness
                     best_individual = self.population[0]
@@ -127,6 +139,8 @@ class Population:
                     best_individual.update_score(self.data)
                     child.mutation(self.data)
                     child.update_score(self.data)
+                    mutation_individuals -= 1
+#----------------------------------------------------------------
 
                 offspring.append(child)
 
@@ -170,7 +184,7 @@ class Population:
         # plt.show()
         return
 
-    def average_fitness(self, fitness: list):  # information
+    def average_fitness(self, fitness: list):               # information
         if not fitness:
             return 0
         average = sum(fitness) / len(fitness)
