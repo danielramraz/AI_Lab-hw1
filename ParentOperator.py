@@ -85,7 +85,7 @@ def score_sum(population: list):
 def winsorize(population: list, percentile=5):
     fitneses = []
     for individual in population:
-        fitneses.append(individual.score_share)
+        fitneses.append(individual.score)
 
     lower_bound = np.percentile(fitneses, percentile)
     upper_bound = np.percentile(fitneses, 100 - percentile)

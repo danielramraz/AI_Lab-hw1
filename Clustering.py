@@ -1,5 +1,43 @@
+# ----------- Python Package -----------
 import math
 import random
+import numpy as np
+# ----------- Consts Name  -----------
+SHARED_FIT = 0
+CLUSTER = 1
+SIGMA_SHARE = 2
+ALPHA = 1
+
+
+def niche_algorithm(population: list, niche_algorithm_type):
+    if niche_algorithm_type == SHARED_FIT:
+        return shared_fitness_cluster(population)
+    elif niche_algorithm_type == CLUSTER:
+        return clustering(population)
+
+
+def shared_fitness_cluster(population: list):
+    similarity_matrix = similarity_matrix_init(population)
+
+    for i, ind in enumerate(population):
+        share_score = []
+        for j in range(len(population)):
+            dist = similarity_matrix[i][j]
+            if dist < SIGMA_SHARE:
+                share_score_j = 1 - ((dist / SIGMA_SHARE) ** ALPHA)
+                share_score.append(share_score_j)
+        ind.score_share = ind.score / sum(share_score)
+
+    return []
+
+
+def similarity_matrix_init(population: list):
+    matrix = np.zeros((len(population), len(population)))
+    for i in range(len(population)):
+        for j in range(len(population)):
+            matrix[i][j] = population[i].distance_func(population[j], True)
+
+    return matrix
 
 
 def clustering(population: list):
@@ -38,6 +76,7 @@ def knn(k: int, population: list, clusters_centers: list):
             clusters_centers = random.sample(population, k)
             if valid_centers(clusters_centers):
                 break
+
     for individual in population:
         dist = [individual.distance_func(center, True) for center in clusters_centers]
         min_dist_centers = []
@@ -46,7 +85,7 @@ def knn(k: int, population: list, clusters_centers: list):
                 min_dist_centers.append((index, center))
 
         closest_center = random.sample(min_dist_centers, 1)[0]
-        clusters[closest_center[0]].append(closest_center[1])
+        clusters[closest_center[0]].append(individual)
         # closest_center_index = dist.index(min(dist))
         # clusters[closest_center_index].append(individual)
 

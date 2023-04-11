@@ -14,6 +14,7 @@ import math
 STRING = 0
 N_QUEENS = 1
 BIN_PACKING = 2
+SIGMA_SHARE = 2
 
 
 class Niche:
@@ -28,22 +29,22 @@ class Niche:
         self.Alpha = 1
         self.t_boltzmann = 100
         self.individuals = individuals
-        self.similarity_matrix = self.init_matrix(individuals)
+        self.similarity_matrix = self.init_matrix()
         self.update_score_share()
         self.fitnesses = [ind.score_share for ind in self.individuals]
 
-    def init_matrix(self, individuals: list):
-        matrix = np.zeros((len(individuals), len(individuals)))
-        for i in range(len(individuals)):
-            for j in range(len(individuals)):
-                matrix[i][j] = individuals[i].distance_func(individuals[j], True)
+    def init_matrix(self):
+        niche_size = len(self.individuals)
+        matrix = np.zeros((niche_size, niche_size))
+        for i in range(niche_size):
+            for j in range(niche_size):
+                matrix[i][j] = self.individuals[i].distance_func(self.individuals[j], True)
 
         return matrix
 
     def update_score_share(self):
-        share_score = []
-
         for ind in self.individuals:
+            share_score = []
             index_ind = self.individuals.index(ind)
             for j in range(len(self.individuals)):
                 dist = self.similarity_matrix[index_ind][j]
@@ -51,7 +52,6 @@ class Niche:
                     share_score_j = 1 - ((dist/self.sigma_share) ** self.Alpha)
                     share_score.append(share_score_j)
             ind.score_share = ind.score / sum(share_score)
-
         return
 
     def generate_individuals(self, data: Data, objects, max_weight, best_fitness):
@@ -61,9 +61,22 @@ class Niche:
         niche_size = len(self.individuals)
         while len(offspring) + len(parents_next_generation) < niche_size:
             # ----------- Parent Selection -----------
+
+            # # Checking that the chosen parents are in the same niche
+            # while True:
+            #     parents = ParentOperator.parent_selection_function(data.parent_selection, self.individuals, [])
+            #     parent1 = parents[0]
+            #     parent2 = parents[1]
+            #     parent1_index = self.individuals.index(parent1)
+            #     parent2_index = self.individuals.index(parent2)
+            #     if self.similarity_matrix[parent1_index][parent2_index] < SIGMA_SHARE:
+            #
+            #         break
+
             parents = ParentOperator.parent_selection_function(data.parent_selection, self.individuals, [])
             parent1 = parents[0]
             parent2 = parents[1]
+            # Keeping the chosen parents for the next generation
             parents_next_generation.append(parent1)
             parents_next_generation.append(parent2)
 

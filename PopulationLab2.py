@@ -18,7 +18,8 @@ ELITE_PERCENTAGE = 0.20
 STRING = 0
 N_QUEENS = 1
 BIN_PACKING = 2
-
+SHARED_FIT = 0
+CLUSTER = 1
 
 class PopulationLab2:
     data: Data
@@ -37,6 +38,7 @@ class PopulationLab2:
         self.niches = []
         if self.data.problem == BIN_PACKING:
             self.read_file_bin_packing()
+            self.data.num_genes = int(1.5 * (np.sum(self.objects) / self.max_weight))
 
         for index in range(self.data.pop_size):
             if self.data.problem == STRING:
@@ -45,7 +47,6 @@ class PopulationLab2:
                 individual = NqueensIndividual(self.data)
             elif self.data.problem == BIN_PACKING:
                 individual = BinPackingIndividual(self.data, self.objects.copy(), self.max_weight, self.best_fitness)
-                self.data.num_genes = int(1.5 * (np.sum(self.objects) / self.max_weight))
 
             self.population.append(individual)
 
@@ -63,12 +64,17 @@ class PopulationLab2:
         for generation in range(self.data.max_generations):
 
             # ----------- Clustering -----------
-            clusters = Clustering.clustering(self.population)
+            clusters = Clustering.niche_algorithm(self.population, self.data.niche_algorithm)
+            # clusters = Clustering.clustering(self.population)
             self.niches = []
-            for cluster in clusters:
-                niche = Niche.Niche(cluster)
-                niche.update_score_share()
+
+            if self.data.niche_algorithm == SHARED_FIT:
+                niche = Niche.Niche(self.population)
                 self.niches.append(niche)
+            elif self.data.niche_algorithm == CLUSTER:
+                for cluster in clusters:
+                    niche = Niche.Niche(cluster)
+                    self.niches.append(niche)
 
             # ----------- Print Fitness Information -----------
             gen_time = time.time()
