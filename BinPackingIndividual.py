@@ -17,11 +17,9 @@ class BinPackingIndividual(Individual):
         self.max_weight = max_weight
         self.best_solution = best_solution
         self.gen = self.init_bins(data, self.objects, self.max_weight)
-        self.gen = self.init_bins(data, self.objects, self.max_weight)
         self.gen_len = len(self.gen)
         self.age = 0
         self.score = 0
-        self.max_weight = max_weight
         self.fitness_function = data.fitness_function
         self.update_score(data)
         self.distance_func_type = FULL_BINS_DIST
@@ -76,34 +74,12 @@ class BinPackingIndividual(Individual):
             else:  # punishment for empty space in the bin
                 under_weight_deviation = self.max_weight - sum(self.gen[i])
                 score -= under_weight_deviation ** 2  # under_wieght_punishment
-        over_weight_punishment = 10000
-        empty_bin_score = 100
-
-        for i in range(self.gen_len):
-            bin_is_over_wieght = sum(self.gen[i]) > self.max_weight
-            bin_is_empty = not bool(self.gen[i])
-
-            if bin_is_empty:  # reword for empty bin
-                score += empty_bin_score
-
-            elif bin_is_over_wieght:  # punishment for over wieght bin
-                over_weight_deviation = sum(self.gen[i]) - self.max_weight
-                score -= over_weight_deviation * over_weight_punishment
-                # score -= over_wieght_punishment
-                # illegal_bins += 1
-
-            else:  # punishment for empty space in the bin
-                under_weight_deviation = self.max_weight - sum(self.gen[i])
-                score -= under_weight_deviation ** 2  # under_wieght_punishment
 
         # if illegal_bins > 0:
         # score -= illegal_bins * 10
         # if illegal_bins > 0:
         # score -= illegal_bins * 10
 
-        normalized_age = self.age / data.max_age
-        age_score = 1 - normalized_age
-        score = (1 - data.age_factor) * score + data.age_factor * age_score
         normalized_age = self.age / data.max_age
         age_score = 1 - normalized_age
         score = (1 - data.age_factor) * score + data.age_factor * age_score
@@ -132,9 +108,6 @@ class BinPackingIndividual(Individual):
             self.gen_len = len(self.gen)
 
         return
-
-
-
 
     # Calculates the difference between the amount of full cells in the current gene and every other gene in the population
     def genetic_diversification_distance(self, population: list):
@@ -200,7 +173,7 @@ class BinPackingIndividual(Individual):
                 full_cells_item = 0
 
         dist = dist / len(population)
-        return dist
+        return dist+1
 
     def max_full_bins_distance(self, population: list):
         dist = 0
@@ -218,7 +191,7 @@ class BinPackingIndividual(Individual):
                 full_cells_item = 0
 
         dist = dist / len(population)
-        return dist
+        return dist+1
 
     def not_empty_bins_distance_individual(self, ind: Individual):
         full_cells_self = 0
@@ -232,7 +205,7 @@ class BinPackingIndividual(Individual):
                 full_cells_ind += 1
 
         dist = abs(full_cells_self - full_cells_ind)
-        return dist
+        return dist+1
 
     def max_full_bins_distance_individual(self, ind: Individual):
         full_cells_self = 0
@@ -246,7 +219,7 @@ class BinPackingIndividual(Individual):
                 full_cells_ind += 1
         dist = abs(full_cells_self - full_cells_ind)
 
-        return dist
+        return dist+1
 
     def best_bin_func(self):
         # best_fit = []

@@ -80,27 +80,7 @@ class NqueensIndividual(Individual):
             dist += ndisordered / (self.gen_len * (self.gen_len - 1))
 
         dist = dist / len(population)
-
-        dist = dist / len(population)
         return dist
-
-        # dist = 0
-        # conflict_self = 0
-        # conflict_item = 0
-        # for i in range(self.gen_len):
-        #     for j in range(self.gen_len):
-        #         if i != j and abs(i - j) == abs(self.gen[i] - self.gen[j]):
-        #             conflict_self += 1
-        #
-        # for item in population:
-        #     for i in range(self.gen_len):
-        #         for j in range(self.gen_len):
-        #             if i != j and abs(i - j) == abs(self.gen[i] - self.gen[j]):
-        #                 conflict_item += 1
-        #     dist += abs(conflict_self-conflict_item)
-        #     conflict_item = 0
-        #
-        # return dist
 
     # Calculates the number of unique promotions
     def genetic_diversification_special(self, population: list):

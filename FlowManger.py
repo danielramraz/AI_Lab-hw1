@@ -3,23 +3,33 @@ import Population
 import PopulationLab2
 # ----------- Python Package -----------
 import time
-
+from threading import Thread
 
 
 class FlowManger:
     population: PopulationLab2
 
     def __init__(self, current_time: time):
+
+        # ----------- Program without threads -----------
         self.total_time = current_time
         self.population = PopulationLab2.PopulationLab2()
+
+        # ----------- Program with the island model -----------
+        # self.threads = []
+        # for thr in range(2):
+        #     thread = Thread(target=PopulationLab2.PopulationLab2(),
+        #                     args=[])
+        #     thread.start()
+        #
+        # for thread in self.threads:
+        #     thread.join()
+
         return
 
     def show_result(self):
         print("==============Final Result==================")
         self.print_time()
-        # print("Best individual:", self.population.best_individual.gen)
-        # print("Best fitness:", self.population.best_individual.score)
-
         # bad_bins = 0
         # self.population.best_individual.gen = list(filter(None, self.population.best_individual.gen))
         # for item in self.population.best_individual.gen:
