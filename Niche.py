@@ -15,7 +15,6 @@ STRING = 0
 N_QUEENS = 1
 BIN_PACKING = 2
 
-
 class Niche:
     sigma_share: float
     Alpha: float
@@ -123,8 +122,3 @@ class Niche:
 
         self.individuals.remove(worst_individual)
         return
-
-
-
-
-

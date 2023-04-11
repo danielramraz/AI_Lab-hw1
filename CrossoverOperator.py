@@ -145,7 +145,6 @@ def crossover_operator(operator, parent1: Individual, parent2: Individual, num_g
 
     return child_gen
 
-
 def bin_packing_cross(parent1: Individual, parent2: Individual):
     child_gen = []
     ran = random.random()
@@ -181,7 +180,6 @@ def bin_packing_cross(parent1: Individual, parent2: Individual):
 
     return child_gen
 
-
 def pmx_shuffle(parent1: Individual, parent2: Individual, num_genes: int):
     p1 = parent1.gen
     p2 = parent2.gen
@@ -207,7 +205,6 @@ def pmx_shuffle(parent1: Individual, parent2: Individual, num_genes: int):
     child_gen = [p1[i] if i < rand_a else p2[i] for i in range(num_genes)]
 
     return child_gen
-
 
 def cx_shuffle(parent1: Individual, parent2: Individual, num_genes: int):
     p1 = parent1.gen

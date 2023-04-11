@@ -1,7 +1,6 @@
 import math
 import random
 
-
 def clustering(population: list):
     silhouette_per_k = []
     elbow_method_per_k = []
@@ -26,7 +25,6 @@ def clustering(population: list):
     # min_elbow_index = elbow_method_per_k.index(min(elbow_method_per_k))
 
     return clusters_per_k[max_silhouette_index]
-
 
 def knn(k: int, population: list, clusters_centers: list):
     clusters = []
@@ -58,8 +56,6 @@ def valid_centers(clusters_centers: list):
                 return False
     return True
 
-
-
 def update_clusters_centers(clusters_centers: list, clusters: list):
     new_clusters_centers = []
     for cluster in clusters:
@@ -70,7 +66,6 @@ def update_clusters_centers(clusters_centers: list, clusters: list):
         new_clusters_centers.append(cluster[new_center_index])
 
     return new_clusters_centers
-
 
 def equal_centers(clusters_centers_previous: list, clusters_centers_update: list):
 
@@ -86,7 +81,6 @@ def equal_centers(clusters_centers_previous: list, clusters_centers_update: list
             return False
 
     return True
-
 
 def silhouette(clusters_centers: list, clusters: list):
     silhouette_score_cluster = []
@@ -115,7 +109,6 @@ def silhouette(clusters_centers: list, clusters: list):
     silhouette_score = sum(silhouette_score_all_clusters) / len(clusters)
     return silhouette_score
 
-
 def find_nearest_cluster(individual, cluster_index, clusters_centers: list):
     dist_from_clusters = [individual.distance_func(center, True) for center in clusters_centers]
     nearest_cluster_index = 0
@@ -127,7 +120,6 @@ def find_nearest_cluster(individual, cluster_index, clusters_centers: list):
 
     return nearest_cluster_index
 
-
 def inertia(species_centers, species):
     dist_per_cluster = []
     for index, cluster in enumerate(species):
@@ -136,7 +128,3 @@ def inertia(species_centers, species):
 
     average_dist_all_clusters = (sum(dist_per_cluster) / len(species))
     return average_dist_all_clusters
-
-
-
-

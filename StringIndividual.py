@@ -78,10 +78,12 @@ class StringIndividual(Individual):
         return bulls_eye_score
 
     def mutation(self, data: Data):
+        print("mutation activate")
         num_genes = self.gen_len
         rand_gen = random.randint(0, num_genes - 1)
         self.gen[rand_gen] = chr(random.randint(32, 126))
-
+        return
+    
     def genetic_diversification_distance(self, population: list):
         dist = 0
         for item in population:
