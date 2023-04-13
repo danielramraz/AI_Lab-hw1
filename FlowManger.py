@@ -5,15 +5,24 @@ import PopulationLab2
 import time
 from threading import Thread
 
+single_test_setting_vector = [0, 13, 0, 1, 
+                              3, 3, 2, 1, 0]
+
+multi_tests_setting_vectors = []
+
 
 class FlowManger:
     population: PopulationLab2
 
     def __init__(self, current_time: time):
+        
+        # ----------- single run by user -----------
+        # self.total_time = current_time
+        # self.population = PopulationLab2.PopulationLab2()
 
-        # ----------- Program without threads -----------
+        # ----------- test Program single thread -----------
         self.total_time = current_time
-        self.population = PopulationLab2.PopulationLab2()
+        self.population = PopulationLab2.PopulationLab2(single_test_setting_vector)
 
         # ----------- Program with the island model -----------
         # self.threads = []
