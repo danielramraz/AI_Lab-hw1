@@ -20,6 +20,10 @@ N_QUEENS = 1
 BIN_PACKING = 2
 SHARED_FIT = 0
 CLUSTER = 1
+CROWDING = 2
+CONSTRAINT_1 = 1
+CONSTRAINT_2 = 2
+
 
 class PopulationLab2:
     data: Data
@@ -64,17 +68,16 @@ class PopulationLab2:
         for generation in range(self.data.max_generations):
 
             # ----------- Clustering -----------
-            clusters = Clustering.niche_algorithm(self.population, self.data.niche_algorithm)
-            # clusters = Clustering.clustering(self.population)
             self.niches = []
 
-            if self.data.niche_algorithm == SHARED_FIT:
-                niche = Niche.Niche(self.population)
-                self.niches.append(niche)
-            elif self.data.niche_algorithm == CLUSTER:
+            if self.data.niche_algorithm == CLUSTER:
+                clusters = Clustering.niche_algorithm(self.population, self.data.niche_algorithm)
                 for cluster in clusters:
                     niche = Niche.Niche(cluster)
                     self.niches.append(niche)
+            else:
+                niche = Niche.Niche(self.population)
+                self.niches.append(niche)
 
             # ----------- Print Fitness Information -----------
             gen_time = time.time()

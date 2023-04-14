@@ -15,6 +15,9 @@ STRING = 0
 N_QUEENS = 1
 BIN_PACKING = 2
 SIGMA_SHARE = 2
+SHARED_FIT = 0
+CLUSTER = 1
+CROWDING = 2
 
 
 class Niche:
@@ -61,18 +64,6 @@ class Niche:
         niche_size = len(self.individuals)
         while len(offspring) + len(parents_next_generation) < niche_size:
             # ----------- Parent Selection -----------
-
-            # # Checking that the chosen parents are in the same niche
-            # while True:
-            #     parents = ParentOperator.parent_selection_function(data.parent_selection, self.individuals, [])
-            #     parent1 = parents[0]
-            #     parent2 = parents[1]
-            #     parent1_index = self.individuals.index(parent1)
-            #     parent2_index = self.individuals.index(parent2)
-            #     if self.similarity_matrix[parent1_index][parent2_index] < SIGMA_SHARE:
-            #
-            #         break
-
             parents = ParentOperator.parent_selection_function(data.parent_selection, self.individuals, [])
             parent1 = parents[0]
             parent2 = parents[1]
@@ -98,7 +89,9 @@ class Niche:
             child.update_score(data)
 
             # ----------- Crowding -----------
-            parents_next_generation = self.crowding(child, parent1, parent2, offspring, parents_next_generation, niche_size)
+            if data.niche_algorithm == CROWDING:
+                parents_next_generation = self.crowding(child, parent1, parent2, offspring, parents_next_generation, niche_size)
+
             offspring.append(child)
 
         self.individuals = offspring + parents_next_generation
