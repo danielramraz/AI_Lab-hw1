@@ -1,9 +1,13 @@
 # ----------- File For Genetic Algorithm -----------
 from Data import Data
+import FlowManger
+from MutationControl import MutationControl
 from StringIndividual import StringIndividual
 from NqueensIndividual import NqueensIndividual
 from BinPackingIndividual import BinPackingIndividual
 import Individual
+import ParentOperator
+import CrossoverOperator
 import Clustering
 import Niche
 # ----------- Python Package -----------
@@ -31,18 +35,22 @@ class PopulationLab2:
     best_fitness: float
     center: Individual
     optimization_func: int
+    fitnesses: list
 
-    def __init__(self):
-        self.data = Data()
+    def __init__(self, setting_vector = None):
+        self.data = Data(setting_vector)
         self.population = []
+        self.fitnesses = []
         self.best_individual = 0
         self.best_fitness = 0
         self.max_weight = 0
         self.objects = []
         self.niches = []
+        
         if self.data.problem == BIN_PACKING:
             self.read_file_bin_packing()
             self.data.num_genes = int(1.5 * (np.sum(self.objects) / self.max_weight))
+
 
         for index in range(self.data.pop_size):
             if self.data.problem == STRING:
@@ -53,8 +61,11 @@ class PopulationLab2:
                 individual = BinPackingIndividual(self.data, self.objects.copy(), self.max_weight, self.best_fitness)
 
             self.population.append(individual)
-
-        # self.genetic_algorithm()
+        return
+    
+    def set_fitnesses(self):
+        for individual in self.population:
+            self.fitnesses.append(individual.score)
         return
 
     def genetic_algorithm(self):
@@ -64,8 +75,8 @@ class PopulationLab2:
         # y1 = []
         # ax = plt.axes()
         # ax.set(xlim=(0, 100), ylim=(0, 100), xlabel='Generation number', ylabel='Average fitness')
-
-        for generation in range(self.data.max_generations):
+                
+        for generation_index in range(self.data.max_generations):
 
             # ----------- Clustering -----------
             self.niches = []
@@ -81,7 +92,7 @@ class PopulationLab2:
 
             # ----------- Print Fitness Information -----------
             gen_time = time.time()
-            print("=========================================")
+            print(f"========================================= {generation_index}")
             for index, niche in enumerate(self.niches):
                 average, variance, sd = self.average_fitness(niche.fitnesses)
                 print(f"Average for niche {index} is {average}")
@@ -92,7 +103,11 @@ class PopulationLab2:
 
             # ----------- Generate New Individuals -----------
             for niche in self.niches:
-                niche.generate_individuals(self.data, self.objects, self.max_weight, self.best_fitness)
+                niche.generate_individuals(self.data, 
+                                           self.objects, 
+                                           self.max_weight, 
+                                           self.best_fitness,
+                                           generation_index)
 
             # ----------- Update Population -----------
             self.population = []
@@ -152,7 +167,7 @@ class PopulationLab2:
         return
 
     def read_file_bin_packing(self):
-        with open("binpack1.txt") as f:
+        with open("BinPackingTests/binpack1.txt") as f:
             f.readline()
             f.readline()
             list_info = f.readline().split()

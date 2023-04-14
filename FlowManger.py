@@ -7,19 +7,28 @@ import threading
 # ----------- Consts Name  ----------
 NUM_ISLANDS = 2
 
+single_test_setting_vector = [0, 13, 0, 1, 
+                              3, 3, 2, 1, 0]
+
+multi_tests_setting_vectors = []
+
 
 class FlowManger:
     population: PopulationLab2
 
     def __init__(self, current_time: time):
         self.total_time = current_time
-
-        # ----------- Program without threads -----------
+        
+        # ----------- single run by user -----------
         # self.population = PopulationLab2.PopulationLab2()
 
+        # ----------- test Program single thread -----------
+        # self.population = PopulationLab2.PopulationLab2(single_test_setting_vector)
+
         # ----------- Program with the island model -----------
+
         # Initialize the populations for each island
-        populations = []
+        self.populations = []
         for i in range(NUM_ISLANDS):
             population = []  # Initialize the population for the current island
             self.populations.append(PopulationLab2.PopulationLab2())
@@ -34,15 +43,6 @@ class FlowManger:
         # Wait for all threads to finish
         for thread in threads:
             thread.join()
-
-        # self.threads = []
-        # for thr in range(2):
-        #     thread = Thread(target=PopulationLab2.PopulationLab2(),
-        #                     args=[])
-        #     thread.start()
-        #
-        # for thread in self.threads:
-        #     thread.join()
 
         return
 
