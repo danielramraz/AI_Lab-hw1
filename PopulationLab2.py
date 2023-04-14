@@ -51,7 +51,6 @@ class PopulationLab2:
             self.read_file_bin_packing()
             self.data.num_genes = int(1.5 * (np.sum(self.objects) / self.max_weight))
 
-
         for index in range(self.data.pop_size):
             if self.data.problem == STRING:
                 individual = StringIndividual(self.data)

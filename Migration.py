@@ -36,11 +36,11 @@ def immigrant_selection(population: list, number_of_competitors):
 def viability_fuc(viability_fuc_num, immigrant, target_population):
     citizen = random.choices(target_population, k=1)[0]
     if viability_fuc_num == CONSTRAINT_1:
-        if citizen.score_share ** 2 + immigrant ** 2 <= 3:
+        if citizen.score_share ** 2 + immigrant.score_share** 2 <= 3:
             return True
 
     elif viability_fuc_num == CONSTRAINT_2:
-        if (citizen.score_share-5) ** 2 + (immigrant-5) ** 2 <= 2:
+        if (citizen.score_share-5) ** 2 + (immigrant.score_share-5) ** 2 <= 2:
             return True
 
     return False

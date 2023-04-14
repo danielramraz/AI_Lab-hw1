@@ -1,12 +1,11 @@
-import random
+# ----------- File For Genetic Algorithm -----------
 from Individual import Individual
-import Population
-import numpy as np
 from Data import Data
-
+# ----------- Consts Name  ----------
 MUTATION_INDIVIDUALS = 10
 MUTATION_DECREASE_FACTOR = 1
 MUTATION_LOG_DECREASE_FACTOR = 1.1
+
 
 class MutationControl:    
     data: Data
