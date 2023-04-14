@@ -22,7 +22,7 @@ class BinPackingIndividual(Individual):
         self.score = 0
         self.fitness_function = data.fitness_function
         self.update_score(data)
-        self.distance_func_type = FULL_BINS_DIST
+        self.distance_func_type = NOT_EMPTY_BINS_DIST
 
     def update_score(self, data: Data):
         if self.fitness_function == ORIGINAL_FIT:

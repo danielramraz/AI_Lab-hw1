@@ -22,7 +22,7 @@ class StringIndividual(Individual):
         self.score = 0
         self.fitness_function = data.fitness_function
         self.update_score(data)
-        self.distance_func_type = HAMMING_DIST
+        self.distance_func_type = EDIT_DIST
 
     def update_score(self, data: Data):
         if self.fitness_function == ORIGINAL_FIT:
