@@ -68,7 +68,6 @@ class PopulationLab2:
         return
 
     def genetic_algorithm(self):
-
         # ----------- Printing graphs for the report -----------
         # x1 = []
         # y1 = []
