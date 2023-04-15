@@ -225,7 +225,7 @@ class BinPackingIndividual(Individual):
         # best_fit = []
         # objects_best_fit_bins_num = []
         #
-        # # mack best fit gen
+        # # make best fit gen
         # copy_objects = self.objects.copy()
         # copy_objects.sort()
         # copy_objects.reverse()

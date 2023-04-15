@@ -1,6 +1,6 @@
 # ----------- File For Genetic Algorithm -----------
 from Data import Data
-import FlowManger
+import FlowManager
 from MutationControl import MutationControl
 from StringIndividual import StringIndividual
 from NqueensIndividual import NqueensIndividual
@@ -94,8 +94,9 @@ class PopulationLab2:
             print(f"========================================= {generation_index}")
             for index, niche in enumerate(self.niches):
                 average, variance, sd = self.average_fitness(niche.fitnesses)
-                print(f"Average for niche {index} is {average}")
-                print(f"Selection Pressure for niche {index} is {variance}")
+                # print(f"Average for niche {index} is {average}")
+                # print(f"Selection Pressure for niche {index} is {variance}")
+                
                 # self.show_histogram(niche.fitnesses)
                 # x1.append(generation)
                 # y1.append(average)
@@ -131,8 +132,8 @@ class PopulationLab2:
                     distance += ind.genetic_diversification_distance(niche.individuals)
                 distance = distance / len(self.population)
                 special = niche.individuals[0].genetic_diversification_special(niche.individuals)
-                print(f"The genetic diversification distance for niche {index} is: {distance}")
-                print(f"The genetic diversification special for niche {index} is: {special}")
+                # print(f"The genetic diversification distance for niche {index} is: {distance}")
+                # print(f"The genetic diversification special for niche {index} is: {special}")
 
             # ----------- Print Time Information -----------
             print(f"The absolute time for this gen is {time.time() - gen_time} sec")
