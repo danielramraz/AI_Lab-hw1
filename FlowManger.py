@@ -23,26 +23,26 @@ class FlowManger:
         # self.population = PopulationLab2.PopulationLab2()
 
         # ----------- test Program single thread -----------
-        # self.population = PopulationLab2.PopulationLab2(single_test_setting_vector)
+        self.population = PopulationLab2.PopulationLab2(single_test_setting_vector)
 
         # ----------- Program with the island model -----------
 
         # Initialize the populations for each island
-        self.populations = []
-        for i in range(NUM_ISLANDS):
-            population = []  # Initialize the population for the current island
-            self.populations.append(PopulationLab2.PopulationLab2())
-            # Create and start threads for each island
+        # self.populations = []
+        # for i in range(NUM_ISLANDS):
+        #     population = []  # Initialize the population for the current island
+        #     self.populations.append(PopulationLab2.PopulationLab2())
+        #     # Create and start threads for each island
 
-        threads = []
-        for i in range(NUM_ISLANDS):
-            thread = threading.Thread(target=populations[i].genetic_algorithm(), args=(i, populations[i]))
-            thread.start()
-            threads.append(thread)
+        # threads = []
+        # for i in range(NUM_ISLANDS):
+        #     thread = threading.Thread(target=populations[i].genetic_algorithm(), args=(i, populations[i]))
+        #     thread.start()
+        #     threads.append(thread)
 
-        # Wait for all threads to finish
-        for thread in threads:
-            thread.join()
+        # # Wait for all threads to finish
+        # for thread in threads:
+        #     thread.join()
 
         return
 
