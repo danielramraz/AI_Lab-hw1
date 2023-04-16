@@ -1,6 +1,7 @@
 # ----------- File For Genetic Algorithm -----------
 from Data import Data
-import FlowManger
+import FlowManager
+import Migration
 from MutationControl import MutationControl
 from StringIndividual import StringIndividual
 from NqueensIndividual import NqueensIndividual
@@ -67,8 +68,7 @@ class PopulationLab2:
             self.fitnesses.append(individual.score)
         return
 
-    def genetic_algorithm(self):
-
+    def genetic_algorithm(self, migration = None, thread_index =None):
         # ----------- Printing graphs for the report -----------
         # x1 = []
         # y1 = []
@@ -94,8 +94,9 @@ class PopulationLab2:
             print(f"========================================= {generation_index}")
             for index, niche in enumerate(self.niches):
                 average, variance, sd = self.average_fitness(niche.fitnesses)
-                print(f"Average for niche {index} is {average}")
-                print(f"Selection Pressure for niche {index} is {variance}")
+                # print(f"Average for niche {index} is {average}")
+                # print(f"Selection Pressure for niche {index} is {variance}")
+                
                 # self.show_histogram(niche.fitnesses)
                 # x1.append(generation)
                 # y1.append(average)
@@ -107,22 +108,27 @@ class PopulationLab2:
                                            self.max_weight, 
                                            self.best_fitness,
                                            generation_index)
-
+                
             # ----------- Update Population -----------
             self.population = []
             for niche in self.niches:
                 for ind in niche.individuals:
                     self.population.append(ind)
 
-            # Update the age of each individual, if reached max_age - remove from population
+            # ----------- migration Population -----------
+            migration.immigrant_selection(self.population, 2, thread_index)
+            self.population = migration.insert_imigranent_to_pop(self.data.viability_fuc_num, self.population, thread_index)
+
+            # ----------- Update Population -----------
+            # Update the size of the  population
+            self.data.pop_size = len(self.population)
+
+             # Update the age of each individual, if reached max_age - remove from population
             for individual in self.population:
                 individual.age += 1
                 individual.update_score(self.data)
                 if individual.age == self.data.max_age:
                     self.population.remove(individual)
-
-            # Update the size of the  population
-            self.data.pop_size = len(self.population)
 
             # ----------- Genetic Diversification -----------
             distance = 0
@@ -131,8 +137,8 @@ class PopulationLab2:
                     distance += ind.genetic_diversification_distance(niche.individuals)
                 distance = distance / len(self.population)
                 special = niche.individuals[0].genetic_diversification_special(niche.individuals)
-                print(f"The genetic diversification distance for niche {index} is: {distance}")
-                print(f"The genetic diversification special for niche {index} is: {special}")
+                # print(f"The genetic diversification distance for niche {index} is: {distance}")
+                # print(f"The genetic diversification special for niche {index} is: {special}")
 
             # ----------- Print Time Information -----------
             print(f"The absolute time for this gen is {time.time() - gen_time} sec")
@@ -154,9 +160,14 @@ class PopulationLab2:
     def average_fitness(self, fitness: list):  # information
         if not fitness:
             return 0
-        average = sum(fitness) / len(fitness)
-        variance = sum([((x - average) ** 2) for x in fitness]) / (len(fitness) - 1)
+        try:
+            average = sum(fitness) / len(fitness)
+            variance = sum([((x - average) ** 2) for x in fitness]) / (len(fitness) - 1)
+        except:
+            average = 0
+            variance = 0
         sd = variance ** 0.5
+
         return average, variance, sd
 
     def show_histogram(self, array):

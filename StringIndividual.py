@@ -22,7 +22,7 @@ class StringIndividual(Individual):
         self.score = 0
         self.fitness_function = data.fitness_function
         self.update_score(data)
-        self.distance_func_type = EDIT_DIST
+        self.distance_func_type = HAMMING_DIST #EDIT_DIST
 
     def update_score(self, data: Data):
         if self.fitness_function == ORIGINAL_FIT:
@@ -134,7 +134,7 @@ class StringIndividual(Individual):
             dist += dist_matrix[self.gen_len - 1, item.gen_len - 1]
 
         dist = dist / len(population)
-        return dist
+        return dist + 1
 
     def hamming_distance(self, population: list):
         dist = 0
@@ -144,7 +144,7 @@ class StringIndividual(Individual):
                     dist += 1
 
         dist = dist / len(population)
-        return dist
+        return dist + 1
 
     def edit_distance_individual(self, ind: Individual):
         dist_matrix = np.zeros([self.gen_len, ind.gen_len])
@@ -158,7 +158,7 @@ class StringIndividual(Individual):
                                                              dist_matrix[
                                                                  index_gen - 1, index_item - 1] + 1)  # substitution
         dist = dist_matrix[self.gen_len - 1, ind.gen_len - 1]
-        return dist
+        return dist + 1
 
     def hamming_distance_individual(self, ind: Individual):
         dist = 0
@@ -166,7 +166,7 @@ class StringIndividual(Individual):
             if ind.gen[index] != self.gen[index]:
                 dist += 1
 
-        return dist
+        return dist + 1
 
 
 

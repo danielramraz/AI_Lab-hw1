@@ -2,15 +2,16 @@
 # ID_1: 305283111
 # ID_2: 207479940
 # ----------- File For Genetic Algorithm -----------
-import FlowManger
+import FlowManager
 # ----------- Python Package -----------
 import time
 
 
 def main():
-    flow_manger = FlowManger.FlowManger(time.time())
-    flow_manger.population.genetic_algorithm()
-    flow_manger.show_result()
+    flow_manager = FlowManager.FlowManager()
+    # flow_manager.run_single_population_solution()
+    flow_manager.run_multi_thread_population_solution()
+    flow_manager.show_results()
 
     return
 

@@ -8,6 +8,7 @@ inputs_text_mutation_control_selection = "Enter mutation control method:\nNONE =
 inputs_text_parent_selection = "Enter the parent selection oprator:\nNone = 0 \nRWS = 1 \nSUS = 2\nTOURNAMENT RANKING = 3\n"
 inputs_text_niche_algorithm = "Enter the niche algorithm:\n (Share Fitness = 0) \nClustering = 1 \n"
 inputs_text_age_factor = "Enter the age factor:\n"
+inputs_text_viability_fuc_num = "Enter the viability func num:\nf1 = 0\nf2=1\n"
 
 
 class Data:
@@ -31,6 +32,7 @@ class Data:
         self.parent_selection = int(input(inputs_text_parent_selection))
         self.niche_algorithm = int(input(inputs_text_niche_algorithm))
         self.age_factor = float(input(inputs_text_age_factor))
+        self.viability_fuc_num = int(input(inputs_text_viability_fuc_num))
         return
     
     def init_with_settings(self, setting_vector):
@@ -43,6 +45,7 @@ class Data:
         self.parent_selection = setting_vector[6]
         self.niche_algorithm = setting_vector[7]
         self.age_factor = setting_vector[8]
+        self.viability_fuc_num = setting_vector[9]
         return
     
     def _init_consts(self):

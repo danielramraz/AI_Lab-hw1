@@ -50,7 +50,7 @@ class MutationControl:
 
         if self.mutation_counter > 0:
             individual.mutation(self.data)
-            print(f"mutation counter {self.mutation_counter}")
+            # print(f"mutation counter {self.mutation_counter}")
             self.mutation_counter -=1
         return
 
