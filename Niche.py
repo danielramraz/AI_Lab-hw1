@@ -34,7 +34,8 @@ class Niche:
         self.individuals = individuals
         self.similarity_matrix = self.init_matrix()
         self.update_score_share()
-        self.fitnesses = [ind.score_share for ind in self.individuals]
+        # self.fitnesses = [ind.score_share for ind in self.individuals]
+        self.fitnesses = [ind.score for ind in self.individuals]
 
     def init_matrix(self):
         niche_size = len(self.individuals)
@@ -135,7 +136,11 @@ class Niche:
     def average_fitness(self, fitness: list):
         if not fitness:
             return 0
-        average = sum(fitness) / len(fitness)
-        variance = sum([((x - average) ** 2) for x in fitness]) / (len(fitness) - 1)
+        try:
+            average = sum(fitness) / len(fitness)
+            variance = sum([((x - average) ** 2) for x in fitness]) / (len(fitness) - 1)
+        except:
+            average = 0
+            variance = 0
         sd = variance ** 0.5
         return average, variance, sd

@@ -1,5 +1,6 @@
 # ----------- File For Genetic Algorithm -----------
 from Individual import Individual
+from Migration import Migration
 import Population
 import PopulationLab2
 # ----------- Python Package -----------
@@ -11,9 +12,10 @@ NUM_ISLANDS = 2
 single_test_setting_vector = [0, 13, 0, 1, 3, 3, 2, 1, 0]
 # setting_vector => 
 # problem[0] num_genes[1] fitness_function[2] mutation_selection[3] 
-# cross_operator[4] mutation_control_selection[5] parent_selection[6] niche_algorithm[7] age_factor[8]
-multi_tests_setting_vectors = [[0, 13, 0, 1, 3, 3, 2, 1, 0], 
-                               [0, 13, 1, 1, 3, 3, 2, 1, 0]]
+# cross_operator[4] mutation_control_selection[5] parent_selection[6] 
+# niche_algorithm[7] age_factor[8] viability_fuc_num[9]
+multi_tests_setting_vectors = [[0, 13, 0, 1, 2, 2, 2, 1, 0, 0], 
+                               [0, 13, 1, 1, 3, 0, 3, 0, 0, 1]]
 
 
 class FlowManager:
@@ -21,11 +23,13 @@ class FlowManager:
     population: PopulationLab2
     islands: list
     results: list 
+    migration: Migration
 
     def __init__(self):
         self.total_time = time.time()
         self.results = []
         self.islands = []
+        self.migration = Migration(NUM_ISLANDS)
         return
 
     def run_single_population_solution(self):
@@ -50,7 +54,7 @@ class FlowManager:
         threads = []
         for i in range(NUM_ISLANDS):
             thread = threading.Thread(target = self.islands[i].genetic_algorithm, 
-                                      args=())
+                                      args=(self.migration, i))
             threads.append(thread)
         
         for thread in threads:
