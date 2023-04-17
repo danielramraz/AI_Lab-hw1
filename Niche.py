@@ -11,6 +11,8 @@ from BinPackingIndividual import BinPackingIndividual
 # ----------- Python Package -----------
 import numpy as np
 import math
+# ----------- Consts Parameters -----------
+ELITE_PERCENTAGE = 0.20
 # ----------- Consts Name  -----------
 STRING = 0
 N_QUEENS = 1
@@ -64,6 +66,14 @@ class Niche:
         offspring = []
         parents_next_generation = []
         niche_size = len(self.individuals)
+
+        # ----------- Elitism -----------
+        # Select the best individuals for reproduction
+        elite_size = int(data.pop_size * ELITE_PERCENTAGE)
+        elite_indices = sorted(range(niche_size), key=lambda i: self.fitnesses[i], reverse=True)[:elite_size]
+        parents_next_generation = [self.individuals[i] for i in elite_indices]
+
+
         while len(offspring) + len(parents_next_generation) < niche_size:
             # ----------- Parent Selection -----------
             parents = ParentOperator.parent_selection_function(data.parent_selection, self.individuals, [])

@@ -9,7 +9,9 @@ import threading
 # ----------- Consts Name  ----------
 NUM_ISLANDS = 2
 
-single_test_setting_vector = [0, 13, 0, 1, 3, 3, 2, 1, 0]
+single_test_setting_vector = [1, 8, 0, 2, 
+                              4, 1, 2, 
+                              0, 0, 0]
 # setting_vector => 
 # problem[0] num_genes[1] fitness_function[2] mutation_selection[3] 
 # cross_operator[4] mutation_control_selection[5] parent_selection[6] 
@@ -38,7 +40,6 @@ class FlowManager:
 
         # ----------- test Program single thread -----------
         self.population = PopulationLab2.PopulationLab2(single_test_setting_vector)
-        
         
         self.population.genetic_algorithm()
         self.results.append(self.population.best_individual)
