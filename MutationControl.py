@@ -16,7 +16,7 @@ class MutationControl:
 
     def __init__(self, data: Data, average_fitness):
         self.NONE = 0
-        self.const_mutation = 1
+        self.Const_mutation = 1
         self.Decrease_linearly = 2
         self.Non_Linear_logistic_decay = 3
 
@@ -37,7 +37,7 @@ class MutationControl:
             if self.data.mutation_control_selection == self.NONE:
                 self.average_const_mutation()
             
-            elif self.data.mutation_control_selection == self.const_mutation:
+            elif self.data.mutation_control_selection == self.Const_mutation:
                 self.const_mutation()
             
             elif self.data.mutation_control_selection == self.Decrease_linearly:

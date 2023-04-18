@@ -25,7 +25,6 @@ class Migration:
         self.immigrant_per_island[population_index] = immigrants
         return
 
-
     # Checking if it is legal to transfer the immigrant to the target population by viability function
     def insert_imigranent_to_pop(self, viability_fuc_num, target_population, population_index):
         citizen = random.choices(target_population, k=1)[0]
