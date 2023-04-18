@@ -9,8 +9,8 @@ import time
 
 def main():
     flow_manager = FlowManager.FlowManager()
-    # flow_manager.run_single_population_solution()
-    flow_manager.run_multi_thread_population_solution()
+    flow_manager.run_single_population_solution()
+    # flow_manager.run_multi_thread_population_solution()
     flow_manager.show_results()
 
     return

@@ -5,8 +5,8 @@ import numpy as np
 # ----------- Consts Name  -----------
 SHARED_FIT = 0
 CLUSTER = 1
+CROWDING = 2
 SIGMA_SHARE = 2
-ALPHA = 1
 
 
 def niche_algorithm(population: list, niche_algorithm_type):
@@ -14,21 +14,31 @@ def niche_algorithm(population: list, niche_algorithm_type):
         return shared_fitness_cluster(population)
     elif niche_algorithm_type == CLUSTER:
         return clustering(population)
+    elif niche_algorithm_type == CROWDING:
+        niches = []
+        niches.append(population)
+        return niches
 
 
 def shared_fitness_cluster(population: list):
     similarity_matrix = similarity_matrix_init(population)
-
+    niches = []
     for i, ind in enumerate(population):
-        share_score = []
-        for j in range(len(population)):
-            dist = similarity_matrix[i][j]
-            if dist < SIGMA_SHARE:
-                share_score_j = 1 - ((dist / SIGMA_SHARE) ** ALPHA)
-                share_score.append(share_score_j)
-        ind.score_share = ind.score / sum(share_score)
+        found_niche = False
+        for niche in niches:
+            for j, niche_ind in enumerate(niche):
+                dist = similarity_matrix[i][j]
+                if dist < SIGMA_SHARE:
+                    niche.append(ind)
+                    found_niche = True
+                    break
+            if found_niche:
+                break
+        if not found_niche:
+            # If no niche found, create a new niche with the current individual
+            niches.append([ind])
 
-    return []
+    return niches
 
 
 def similarity_matrix_init(population: list):
@@ -68,8 +78,7 @@ def clustering(population: list):
 
 def knn(k: int, population: list, clusters_centers: list):
     clusters = []
-    for i in range(k):
-        clusters.append([])
+    clusters_centers_gen = []
 
     if not clusters_centers:
         while True:
@@ -77,17 +86,31 @@ def knn(k: int, population: list, clusters_centers: list):
             if valid_centers(clusters_centers):
                 break
 
-    for individual in population:
-        dist = [individual.distance_func(center, True) for center in clusters_centers]
-        min_dist_centers = []
-        for index, center in enumerate(clusters_centers):
-            if dist[index] == min(dist):
-                min_dist_centers.append((index, center))
+    for i in range(len(clusters_centers)):
+        clusters.append([])
 
-        closest_center = random.sample(min_dist_centers, 1)[0]
-        clusters[closest_center[0]].append(individual)
-        # closest_center_index = dist.index(min(dist))
-        # clusters[closest_center_index].append(individual)
+    for individual in population:
+        if individual.gen not in clusters_centers_gen:
+            dist = [individual.distance_func(center, True) for center in clusters_centers]
+            min_dist_centers = []
+            for index, center in enumerate(clusters_centers):
+                if dist[index] == min(dist):
+                    min_dist_centers.append((index, center))
+
+            closest_center = random.sample(min_dist_centers, 1)[0]
+            clusters[closest_center[0]].append(individual)
+            # closest_center_index = dist.index(min(dist))
+            # clusters[closest_center_index].append(individual)
+
+    clusters_temp = clusters
+    clusters_centers_temp = clusters_centers
+    if len(clusters_temp) != len(clusters_centers_temp):
+        print("clusters_temp:", len(clusters_temp))
+        print("clusters_centers_temp:", len(clusters_centers_temp))
+    for i, cluster in enumerate(clusters_temp):
+        if len(cluster) == 0:
+            clusters.remove(cluster)
+            clusters_centers.remove(clusters_centers_temp[i])
 
     return clusters_centers, clusters
 

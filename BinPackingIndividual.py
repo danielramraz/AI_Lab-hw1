@@ -127,7 +127,6 @@ class BinPackingIndividual(Individual):
                 full_cells_item = 0
 
         dist = dist / len(population)
-        dist = dist / len(population)
         return dist
 
     # Calculates the number of unique individual by number of full cells
