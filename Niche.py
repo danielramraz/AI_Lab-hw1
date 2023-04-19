@@ -39,7 +39,6 @@ class Niche:
         self.individuals = individuals
         self.similarity_matrix = self.init_matrix()
         self.update_score_share()
-        # self.fitnesses = [ind.score_share for ind in self.individuals]
         self.fitnesses = [ind.score for ind in self.individuals]
 
     def init_matrix(self):

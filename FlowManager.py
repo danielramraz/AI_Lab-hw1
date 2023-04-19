@@ -60,7 +60,6 @@ class FlowManager:
         
         for thread in threads:
             thread.start()
-            print("thread stated =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
 
         # Wait for all threads to finish
         for thread in threads:

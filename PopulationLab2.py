@@ -85,24 +85,22 @@ class PopulationLab2:
         for generation_index in range(self.data.max_generations):
 
             # ----------- Clustering -----------
-            self.niches = []
-
-            if self.data.niche_algorithm == CLUSTER:
+            if generation_index % 15 == 0:
+                self.niches = []
                 clusters = Clustering.niche_algorithm(self.population, self.data.niche_algorithm)
                 for cluster in clusters:
                     niche = Niche.Niche(cluster)
                     self.niches.append(niche)
-            else:
-                niche = Niche.Niche(self.population)
-                self.niches.append(niche)
 
+            # x1.append(generation_index)
+            # y1.append(len(clusters))
             # ----------- Print Fitness Information -----------
             gen_time = time.time()
             print(f"========================================= {generation_index}")
             for index, niche in enumerate(self.niches):
                 average, variance, sd = self.average_fitness(niche.fitnesses)
-                # print(f"Average for niche {index} is {average}")
-                # print(f"Selection Pressure for niche {index} is {variance}")
+                print(f"Average for niche {index+1} is {average}")
+                print(f"Selection Pressure for niche {index+1} is {variance}")
                 
                 # self.show_histogram(niche.fitnesses)
 
@@ -124,14 +122,15 @@ class PopulationLab2:
                     self.population.append(ind)
 
             # ----------- migration Population -----------
-            migration.immigrant_selection(self.population, 2, thread_index)
-            self.population = migration.insert_imigranent_to_pop(self.data.viability_fuc_num, self.population, thread_index)
+            if migration != None:
+                migration.immigrant_selection(self.population, 2, thread_index)
+                self.population = migration.insert_imigranent_to_pop(self.data.viability_fuc_num, self.population, thread_index)
 
             # ----------- Update Population -----------
             # Update the size of the  population
             self.data.pop_size = len(self.population)
 
-             # Update the age of each individual, if reached max_age - remove from population
+            # Update the age of each individual, if reached max_age - remove from population
             for individual in self.population:
                 individual.age += 1
                 individual.update_score(self.data)
@@ -145,8 +144,10 @@ class PopulationLab2:
                     distance += ind.genetic_diversification_distance(niche.individuals)
                 distance = distance / len(self.population)
                 special = niche.individuals[0].genetic_diversification_special(niche.individuals)
-                # print(f"The genetic diversification distance for niche {index} is: {distance}")
-                # print(f"The genetic diversification special for niche {index} is: {special}")
+                print(f"The genetic diversification distance for niche {index+1} is: {distance}")
+                print(f"The genetic diversification special for niche {index+1} is: {special}")
+                # y1.append(distance)
+
 
             # ----------- Print Time Information -----------
             print(f"The absolute time for this gen is {time.time() - gen_time} sec")
@@ -189,7 +190,7 @@ class PopulationLab2:
             f.readline()
             f.readline()
             list_info = f.readline().split()
-            print(list_info)
+            # print(list_info)
             self.max_weight = int(list_info[0])
             num_items = int(list_info[1])
             self.best_fitness = int(list_info[2])
