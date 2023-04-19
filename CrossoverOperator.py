@@ -10,6 +10,7 @@ UNIFORM = 3
 PMX = 4
 CX = 5
 BIN_PACKING = 6
+CARTESIAN = 7
 
 
 def crossover_operator(operator, parent1: Individual, parent2: Individual, num_genes: int):
@@ -37,6 +38,10 @@ def crossover_operator(operator, parent1: Individual, parent2: Individual, num_g
 
     elif operator == BIN_PACKING:
         child_gen = bin_packing_cross(parent1, parent2)
+
+    elif operator == CARTESIAN:
+        rand_a = random.choice([0, 1])
+        child_gen = (parent1.gen[rand_a] , parent2.gen[(rand_a + 1) % 2])
 
     return child_gen
 

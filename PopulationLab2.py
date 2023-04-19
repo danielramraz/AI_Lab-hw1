@@ -1,4 +1,5 @@
 # ----------- File For Genetic Algorithm -----------
+from CartesianIndividual import CartesianIndividual
 from Data import Data
 import FlowManager
 import Migration
@@ -23,6 +24,7 @@ ELITE_PERCENTAGE = 0.20
 STRING = 0
 N_QUEENS = 1
 BIN_PACKING = 2
+CARTESIAN = 3
 SHARED_FIT = 0
 CLUSTER = 1
 CROWDING = 2
@@ -59,6 +61,8 @@ class PopulationLab2:
                 individual = NqueensIndividual(self.data)
             elif self.data.problem == BIN_PACKING:
                 individual = BinPackingIndividual(self.data, self.objects.copy(), self.max_weight, self.best_fitness)
+            elif self.data.problem == CARTESIAN:
+                individual = CartesianIndividual(self.data)
 
             self.population.append(individual)
         return
@@ -73,8 +77,10 @@ class PopulationLab2:
         # x1 = []
         # y1 = []
         # ax = plt.axes()
-        # # Genetic diversification
-        # ax.set(xlim=(0, 100), ylim=(0, 6), xlabel='Generation number', ylabel='Number of niches')
+        # ax.set(xlim=(0, 100), 
+        #        ylim=(-500000, 500000), 
+        #        xlabel='Generation number', 
+        #        ylabel='Average fitness')
                 
         for generation_index in range(self.data.max_generations):
 
@@ -98,6 +104,8 @@ class PopulationLab2:
                 
                 # self.show_histogram(niche.fitnesses)
 
+                # x1.append(generation_index)
+                # y1.append(average)
 
             # ----------- Generate New Individuals -----------
             for niche in self.niches:

@@ -9,13 +9,15 @@ import threading
 # ----------- Consts Name  ----------
 NUM_ISLANDS = 2
 
-single_test_setting_vector = [2, 0, 0, 0, 6, 2, 2, 1, 0, 0]
+single_test_setting_vector = [3, 2, 0, 4, 
+                              7, 1, 2, 
+                              0, 0, 0]
 # setting_vector => 
 # problem[0] num_genes[1] fitness_function[2] mutation_selection[3] 
 # cross_operator[4] mutation_control_selection[5] parent_selection[6] 
 # niche_algorithm[7] age_factor[8] viability_fuc_num[9]
-multi_tests_setting_vectors = [[0, 13, 0, 1, 2, 2, 2, 1, 0, 0], 
-                               [0, 13, 1, 1, 3, 0, 3, 0, 0, 1]]
+multi_tests_setting_vectors = [[3, 2, 0, 4, 7, 1, 2, 0, 0, 1], 
+                               [3, 2, 0, 4, 7, 1, 2, 0, 0, 2]]
 
 
 class FlowManager:
@@ -38,7 +40,6 @@ class FlowManager:
 
         # ----------- test Program single thread -----------
         self.population = PopulationLab2.PopulationLab2(single_test_setting_vector)
-        
         
         self.population.genetic_algorithm()
         self.results.append(self.population.best_individual)
@@ -72,18 +73,18 @@ class FlowManager:
     def show_results(self):
         print("==============Final Result==================")
         self.print_time()
-        bad_bins = 0
-        self.population.best_individual.gen = list(filter(None, self.population.best_individual.gen))
-        for item in self.population.best_individual.gen:
-            if sum(item) > self.population.max_weight:
-                bad_bins += 1
         
         for index in range(len(self.results)):
             print(f"Best individual {index}:", self.results[index].gen)
             print(f"Best fitness {index}:", self.results[index].score)
         
-        print("BAD bins:", bad_bins)
-        print("num bins:", len(self.population.best_individual.gen))
+        # bad_bins = 0
+        # self.population.best_individual.gen = list(filter(None, self.population.best_individual.gen))
+        # for item in self.population.best_individual.gen:
+        #     if sum(item) > self.population.max_weight:
+        #         bad_bins += 1
+        # print("BAD bins:", bad_bins)
+        # print("num bins:", len(self.population.best_individual.gen))
 
     def print_time(self):
         print(f"the total time for this algo is {time.time() - self.total_time} sec")

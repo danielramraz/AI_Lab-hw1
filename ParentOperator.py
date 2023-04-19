@@ -49,7 +49,7 @@ def sus(population: list):
         fit = first_spine_pointer + i * delta
         current, j = 0, 0
         while current < fit and j < len(population):
-            current += population[j].score_share
+            current += population[j].score
             j += 1
         if j == len(population):
             parents.append(population[j-1])
@@ -67,7 +67,7 @@ def tournament_ranking(population: list):
 
     k_individual = random.choices(population, k=number_of_competitors)
     for individual in k_individual:
-        k_fitness.append(individual.score_share)
+        k_fitness.append(individual.score)
 
     k_sorted = sorted(range(number_of_competitors), key=lambda i: k_fitness[i], reverse=True)[:number_of_parents]
     parents = [k_individual[i] for i in k_sorted]
@@ -78,14 +78,14 @@ def tournament_ranking(population: list):
 def score_sum(population: list):
     sum_score = 0
     for individual in population:
-        sum_score += individual.score_share
+        sum_score += individual.score
     return sum_score
 
 
 def winsorize(population: list, percentile=5):
     fitneses = []
     for individual in population:
-        fitneses.append(individual.score_share)
+        fitneses.append(individual.score)
 
     lower_bound = np.percentile(fitneses, percentile)
     upper_bound = np.percentile(fitneses, 100 - percentile)

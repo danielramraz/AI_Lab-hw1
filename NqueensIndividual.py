@@ -38,9 +38,9 @@ class NqueensIndividual(Individual):
         return score
 
     def mutation(self, data: Data):
-        if data.mutation == 2:
+        if data.mutation_selection == 2:
             self.invertion_shuffle()
-        elif data.mutation == 3:
+        elif data.mutation_selection == 3:
             self.just_shuffle()
         return
 

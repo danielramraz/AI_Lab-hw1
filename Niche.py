@@ -1,5 +1,6 @@
 # ----------- File Form Lab -----------
 import random
+from CartesianIndividual import CartesianIndividual
 import Data
 import Individual
 import CrossoverOperator
@@ -11,10 +12,14 @@ from BinPackingIndividual import BinPackingIndividual
 # ----------- Python Package -----------
 import numpy as np
 import math
+# ----------- Consts Parameters -----------
+ELITE_PERCENTAGE = 0.20
 # ----------- Consts Name  -----------
 STRING = 0
 N_QUEENS = 1
 BIN_PACKING = 2
+CARTESIAN = 3
+
 SIGMA_SHARE = 2
 SHARED_FIT = 0
 CLUSTER = 1
@@ -63,6 +68,14 @@ class Niche:
         offspring = []
         parents_next_generation = []
         niche_size = len(self.individuals)
+
+        # ----------- Elitism -----------
+        # Select the best individuals for reproduction
+        elite_size = int(data.pop_size * ELITE_PERCENTAGE)
+        elite_indices = sorted(range(niche_size), key=lambda i: self.fitnesses[i], reverse=True)[:elite_size]
+        parents_next_generation = [self.individuals[i] for i in elite_indices]
+
+
         while len(offspring) + len(parents_next_generation) < niche_size:
             # ----------- Parent Selection -----------
             parents = ParentOperator.parent_selection_function(data.parent_selection, self.individuals, [])
@@ -79,7 +92,10 @@ class Niche:
                 child = NqueensIndividual(data)
             elif data.problem == BIN_PACKING:
                 temp_objects = objects.copy()
-                child = BinPackingIndividual(data, temp_objects, max_weight, best_fitness)
+                child = BinPackingIndividual(data, temp_objects, max_weight, best_fitness)            
+            elif data.problem == CARTESIAN:
+                child = CartesianIndividual(data)
+
 
             child_gen = CrossoverOperator.crossover_operator(data.cross_operator, parent1, parent2, data.num_genes)
             child.gen = child_gen
