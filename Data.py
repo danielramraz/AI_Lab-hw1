@@ -1,14 +1,14 @@
 
-inputs_text_problem = "Select a problem:\nString = 0\nN-Queens = 1\nBinPacking = 2\n"
-inputs_text_num_genes = "enter the size of the gen:\nFor String enter 13\nFor N-Queens enter 8\nFor BinPacking enter 0\n"
+inputs_text_problem = "Select a problem:\nString = 0\nN-Queens = 1\nBinPacking = 2\nCartesian function = 3\n"
+inputs_text_num_genes = "enter the size of the gen:\nFor String enter 13\nFor N-Queens enter 8\nFor BinPacking enter 0\nFor Cartesian enter 2\n"
 inputs_text_fitness_function = "Enter the fitness function:\noriginal = 0 \nString bulls eye = 1\nBitwise bulls eye = 2\n"
-inputs_text_mutation_selection = "Enter them mutation:\nBinPacking None = 0 \nString mutation= 1\nN-Queens invertion shuffle = 2\nN-Queens Just shuffle = 3\n"
-inputs_text_crossover_operator = "Enter the number of crossover operator:\nNone = 0 \nSingel = 1\nTwo = 2\nUniform = 3\nN-Queens PMX = 4\nN-Queens CX = 5\nBIN_PACKING = 6\n"
+inputs_text_mutation_selection = "Enter the mutation:\nBinPacking None = 0 \nString mutation= 1\nN-Queens invertion shuffle = 2\nN-Queens Just shuffle = 3\nCartesian mutation = 4\n"
+inputs_text_crossover_operator = "Enter the number of crossover operator:\nNone = 0 \nSingel = 1\nTwo = 2\nUniform = 3\nN-Queens PMX = 4\nN-Queens CX = 5\nBIN_PACKING = 6\nCartesian = 7\n"
 inputs_text_mutation_control_selection = "Enter mutation control method:\nNONE = 0 \nConst mutation= 1\nDecrease linearly = 2\nNon Linear logistic decay = 3\n"
 inputs_text_parent_selection = "Enter the parent selection oprator:\nNone = 0 \nRWS = 1 \nSUS = 2\nTOURNAMENT RANKING = 3\n"
 inputs_text_niche_algorithm = "Enter the niche algorithm:\nShare Fitness = 0 \nClustering = 1 \nCrowding = 2\n"
 inputs_text_age_factor = "Enter the age factor:\n"
-inputs_text_viability_fuc_num = "Enter the viability func num:\nf1 = 0\nf2 = 1\n"
+inputs_text_viability_fuc_num = "Enter the viability func num:\nNone = 0\nf1 = 1\nf2 = 2\n"
 
 
 class Data:

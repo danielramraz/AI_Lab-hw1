@@ -1,5 +1,6 @@
 # ----------- File Form Lab -----------
 import random
+from CartesianIndividual import CartesianIndividual
 import Data
 import Individual
 import CrossoverOperator
@@ -17,6 +18,8 @@ ELITE_PERCENTAGE = 0.20
 STRING = 0
 N_QUEENS = 1
 BIN_PACKING = 2
+CARTESIAN = 3
+
 SIGMA_SHARE = 2
 SHARED_FIT = 0
 CLUSTER = 1
@@ -90,7 +93,10 @@ class Niche:
                 child = NqueensIndividual(data)
             elif data.problem == BIN_PACKING:
                 temp_objects = objects.copy()
-                child = BinPackingIndividual(data, temp_objects, max_weight, best_fitness)
+                child = BinPackingIndividual(data, temp_objects, max_weight, best_fitness)            
+            elif data.problem == CARTESIAN:
+                child = CartesianIndividual(data)
+
 
             child_gen = CrossoverOperator.crossover_operator(data.cross_operator, parent1, parent2, data.num_genes)
             child.gen = child_gen

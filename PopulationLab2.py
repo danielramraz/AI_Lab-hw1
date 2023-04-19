@@ -1,4 +1,5 @@
 # ----------- File For Genetic Algorithm -----------
+from CartesianIndividual import CartesianIndividual
 from Data import Data
 import FlowManager
 import Migration
@@ -23,6 +24,7 @@ ELITE_PERCENTAGE = 0.20
 STRING = 0
 N_QUEENS = 1
 BIN_PACKING = 2
+CARTESIAN = 3
 SHARED_FIT = 0
 CLUSTER = 1
 CROWDING = 2
@@ -59,6 +61,8 @@ class PopulationLab2:
                 individual = NqueensIndividual(self.data)
             elif self.data.problem == BIN_PACKING:
                 individual = BinPackingIndividual(self.data, self.objects.copy(), self.max_weight, self.best_fitness)
+            elif self.data.problem == CARTESIAN:
+                individual = CartesianIndividual(self.data)
 
             self.population.append(individual)
         return
@@ -70,13 +74,13 @@ class PopulationLab2:
 
     def genetic_algorithm(self, migration = None, thread_index =None):
         # ----------- Printing graphs for the report -----------
-        x1 = []
-        y1 = []
-        ax = plt.axes()
-        ax.set(xlim=(0, 100), 
-               ylim=(0, 100), 
-               xlabel='Generation number', 
-               ylabel='Average fitness')
+        # x1 = []
+        # y1 = []
+        # ax = plt.axes()
+        # ax.set(xlim=(0, 100), 
+        #        ylim=(-500000, 500000), 
+        #        xlabel='Generation number', 
+        #        ylabel='Average fitness')
                 
         for generation_index in range(self.data.max_generations):
 
@@ -101,8 +105,9 @@ class PopulationLab2:
                 # print(f"Selection Pressure for niche {index} is {variance}")
                 
                 # self.show_histogram(niche.fitnesses)
-                x1.append(generation_index)
-                y1.append(average)
+
+                # x1.append(generation_index)
+                # y1.append(average)
 
             # ----------- Generate New Individuals -----------
             for niche in self.niches:
@@ -119,8 +124,8 @@ class PopulationLab2:
                     self.population.append(ind)
 
             # ----------- migration Population -----------
-            # migration.immigrant_selection(self.population, 2, thread_index)
-            # self.population = migration.insert_imigranent_to_pop(self.data.viability_fuc_num, self.population, thread_index)
+            migration.immigrant_selection(self.population, 2, thread_index)
+            self.population = migration.insert_imigranent_to_pop(self.data.viability_fuc_num, self.population, thread_index)
 
             # ----------- Update Population -----------
             # Update the size of the  population
@@ -156,8 +161,8 @@ class PopulationLab2:
                 self.best_individual = individual
 
         self.best_fitness = self.best_individual.score
-        ax.plot(np.array(x1), np.array(y1))
-        plt.show()
+        # ax.plot(np.array(x1), np.array(y1))
+        # plt.show()
         return
 
     def average_fitness(self, fitness: list):  # information
