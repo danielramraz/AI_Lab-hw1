@@ -115,16 +115,17 @@ class BinPackingIndividual(Individual):
         full_cells_self = 0
         full_cells_item = 0
         for item in self.gen:
-            if sum(item) >= self.max_weight:
+            # if sum(item) >= self.max_weight:
+            if sum(item) > 0:
                 full_cells_self += 1
 
         for individual in population:
             for item in individual.gen:
-                if sum(item) >= self.max_weight:
+                # if sum(item) >= self.max_weight
+                if sum(item) > 0:
                     full_cells_item += 1
-                dist += abs(full_cells_self - full_cells_item)
-                dist += abs(full_cells_self - full_cells_item)
-                full_cells_item = 0
+            dist += abs(full_cells_self - full_cells_item)
+            full_cells_item = 0
 
         dist = dist / len(population)
         return dist

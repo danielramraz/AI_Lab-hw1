@@ -9,9 +9,9 @@ import threading
 # ----------- Consts Name  ----------
 NUM_ISLANDS = 2
 
-single_test_setting_vector = [3, 2, 0, 4, 
-                              7, 1, 2, 
-                              0, 0, 0]
+single_test_setting_vector = [2, 0, 0, 0,
+                              6, 1, 2,
+                              2, 0, 0]
 # setting_vector => 
 # problem[0] num_genes[1] fitness_function[2] mutation_selection[3] 
 # cross_operator[4] mutation_control_selection[5] parent_selection[6] 
@@ -78,13 +78,13 @@ class FlowManager:
             print(f"Best individual {index}:", self.results[index].gen)
             print(f"Best fitness {index}:", self.results[index].score)
         
-        # bad_bins = 0
-        # self.population.best_individual.gen = list(filter(None, self.population.best_individual.gen))
-        # for item in self.population.best_individual.gen:
-        #     if sum(item) > self.population.max_weight:
-        #         bad_bins += 1
-        # print("BAD bins:", bad_bins)
-        # print("num bins:", len(self.population.best_individual.gen))
+        bad_bins = 0
+        self.population.best_individual.gen = list(filter(None, self.population.best_individual.gen))
+        for item in self.population.best_individual.gen:
+            if sum(item) > self.population.max_weight:
+                bad_bins += 1
+        print("BAD bins:", bad_bins)
+        print("num bins:", len(self.population.best_individual.gen))
 
     def print_time(self):
         print(f"the total time for this algo is {time.time() - self.total_time} sec")

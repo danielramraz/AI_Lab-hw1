@@ -62,23 +62,17 @@ class Niche:
             ind.score_share = ind.score / sum(share_score)
         return
 
-    def generate_individuals(self, data: Data, objects, max_weight, best_fitness, generation_index):
+    def generate_individuals(self, data: Data, objects, max_weight, best_fitness, generation_index, elites):
         mutation_control = MutationControl(data, self.average_fitness(self.fitnesses))
 
         offspring = []
         parents_next_generation = []
         niche_size = len(self.individuals)
 
-        # ----------- Elitism -----------
-        # Select the best individuals for reproduction
-        elite_size = int(data.pop_size * ELITE_PERCENTAGE)
-        elite_indices = sorted(range(niche_size), key=lambda i: self.fitnesses[i], reverse=True)[:elite_size]
-        parents_next_generation = [self.individuals[i] for i in elite_indices]
-
-
         while len(offspring) + len(parents_next_generation) < niche_size:
             # ----------- Parent Selection -----------
-            parents = ParentOperator.parent_selection_function(data.parent_selection, self.individuals, [])
+            pop = self.individuals + elites
+            parents = ParentOperator.parent_selection_function(data.parent_selection, pop, elites)
             parent1 = parents[0]
             parent2 = parents[1]
             # Keeping the chosen parents for the next generation
@@ -95,7 +89,6 @@ class Niche:
                 child = BinPackingIndividual(data, temp_objects, max_weight, best_fitness)            
             elif data.problem == CARTESIAN:
                 child = CartesianIndividual(data)
-
 
             child_gen = CrossoverOperator.crossover_operator(data.cross_operator, parent1, parent2, data.num_genes)
             child.gen = child_gen

@@ -65,9 +65,11 @@ class PopulationLab2:
                 individual = CartesianIndividual(self.data)
 
             self.population.append(individual)
+            self.set_fitnesses()
         return
     
     def set_fitnesses(self):
+        self.fitnesses = []
         for individual in self.population:
             self.fitnesses.append(individual.score)
         return
@@ -77,15 +79,24 @@ class PopulationLab2:
         # x1 = []
         # y1 = []
         # ax = plt.axes()
-        # ax.set(xlim=(0, 100), 
-        #        ylim=(-500000, 500000), 
-        #        xlabel='Generation number', 
-        #        ylabel='Average fitness')
-                
+        # ax.set(xlim=(0, 100),
+        #        ylim=(0, 50),
+        #        xlabel='Generation number',
+        #        ylabel='Genetic diversification distance')
+
         for generation_index in range(self.data.max_generations):
 
+            # ----------- Elitism -----------
+            # Select the best individuals for reproduction
+            elite_size = int(self.data.pop_size * ELITE_PERCENTAGE)  # exploitation
+            elite_indices = sorted(range(self.data.pop_size), key=lambda i: self.fitnesses[i], reverse=True)[:elite_size]
+            elites = [self.population[i] for i in elite_indices]
+
+            for ind in elites:
+                self.population.remove(ind)
+
             # ----------- Clustering -----------
-            if generation_index % 15 == 0:
+            if generation_index % 1 == 0:
                 self.niches = []
                 clusters = Clustering.niche_algorithm(self.population, self.data.niche_algorithm)
                 for cluster in clusters:
@@ -103,7 +114,6 @@ class PopulationLab2:
                 print(f"Selection Pressure for niche {index+1} is {variance}")
                 
                 # self.show_histogram(niche.fitnesses)
-
                 # x1.append(generation_index)
                 # y1.append(average)
 
@@ -113,10 +123,11 @@ class PopulationLab2:
                                            self.objects, 
                                            self.max_weight, 
                                            self.best_fitness,
-                                           generation_index)
+                                           generation_index,
+                                           elites)
                 
             # ----------- Update Population -----------
-            self.population = []
+            self.population = elites
             for niche in self.niches:
                 for ind in niche.individuals:
                     self.population.append(ind)
@@ -127,15 +138,18 @@ class PopulationLab2:
                 self.population = migration.insert_imigranent_to_pop(self.data.viability_fuc_num, self.population, thread_index)
 
             # ----------- Update Population -----------
-            # Update the size of the  population
-            self.data.pop_size = len(self.population)
-
             # Update the age of each individual, if reached max_age - remove from population
             for individual in self.population:
                 individual.age += 1
                 individual.update_score(self.data)
                 if individual.age == self.data.max_age:
                     self.population.remove(individual)
+
+            # Update the size of the  population
+            self.data.pop_size = len(self.population)
+
+            # Update fitness list for population
+            self.set_fitnesses()
 
             # ----------- Genetic Diversification -----------
             distance = 0
@@ -147,7 +161,6 @@ class PopulationLab2:
                 print(f"The genetic diversification distance for niche {index+1} is: {distance}")
                 print(f"The genetic diversification special for niche {index+1} is: {special}")
                 # y1.append(distance)
-
 
             # ----------- Print Time Information -----------
             print(f"The absolute time for this gen is {time.time() - gen_time} sec")
