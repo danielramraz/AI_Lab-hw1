@@ -179,7 +179,7 @@ class PopulationLab2:
         # plt.show()
         return
 
-    def average_fitness(self, fitness: list):  # information
+    def average_fitness(self, fitness: list): 
         if not fitness:
             return 0
         try:
