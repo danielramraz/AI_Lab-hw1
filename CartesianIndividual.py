@@ -49,7 +49,11 @@ class CartesianIndividual(Individual):
         return dist + 1
 
     def genetic_diversification_distance(self, population: list):
-        return 0
+        dist = 0
+        for ind in population:
+            dist += self.distance_func(ind, True)
+        dist = dist / len(population)
+        return dist + 1
 
     def genetic_diversification_special(self, population: list):
         return 0

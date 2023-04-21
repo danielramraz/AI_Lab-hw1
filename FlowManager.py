@@ -11,7 +11,7 @@ NUM_ISLANDS = 2
 
 single_test_setting_vector = [2, 0, 0, 0,
                               6, 1, 2,
-                              2, 0, 0]
+                              0, 0, 0]
 # setting_vector => 
 # problem[0] num_genes[1] fitness_function[2] mutation_selection[3] 
 # cross_operator[4] mutation_control_selection[5] parent_selection[6] 

@@ -76,13 +76,13 @@ class PopulationLab2:
 
     def genetic_algorithm(self, migration = None, thread_index =None):
         # ----------- Printing graphs for the report -----------
-        # x1 = []
-        # y1 = []
-        # ax = plt.axes()
-        # ax.set(xlim=(0, 100),
-        #        ylim=(0, 50),
-        #        xlabel='Generation number',
-        #        ylabel='Genetic diversification distance')
+        x1 = []
+        y1 = []
+        ax = plt.axes()
+        ax.set(xlim=(0, 100),
+               ylim=(0, 10),
+               xlabel='Generation number',
+               ylabel='Genetic diversification distance')
 
         for generation_index in range(self.data.max_generations):
 
@@ -96,14 +96,14 @@ class PopulationLab2:
                 self.population.remove(ind)
 
             # ----------- Clustering -----------
-            if generation_index % 1 == 0:
+            if generation_index % 5 == 0:
                 self.niches = []
                 clusters = Clustering.niche_algorithm(self.population, self.data.niche_algorithm)
                 for cluster in clusters:
                     niche = Niche.Niche(cluster)
                     self.niches.append(niche)
 
-            # x1.append(generation_index)
+            x1.append(generation_index)
             # y1.append(len(clusters))
             # ----------- Print Fitness Information -----------
             gen_time = time.time()
@@ -152,15 +152,17 @@ class PopulationLab2:
             self.set_fitnesses()
 
             # ----------- Genetic Diversification -----------
-            distance = 0
+            distance_all = 0
             for index, niche in enumerate(self.niches):
+                distance = 0
                 for ind in niche.individuals:
                     distance += ind.genetic_diversification_distance(niche.individuals)
                 distance = distance / len(self.population)
+                distance_all += distance
                 special = niche.individuals[0].genetic_diversification_special(niche.individuals)
                 print(f"The genetic diversification distance for niche {index+1} is: {distance}")
                 print(f"The genetic diversification special for niche {index+1} is: {special}")
-                # y1.append(distance)
+            y1.append(distance_all/ len(self.niches))
 
             # ----------- Print Time Information -----------
             print(f"The absolute time for this gen is {time.time() - gen_time} sec")
@@ -175,8 +177,8 @@ class PopulationLab2:
                 self.best_individual = individual
 
         self.best_fitness = self.best_individual.score
-        # ax.plot(np.array(x1), np.array(y1))
-        # plt.show()
+        ax.plot(np.array(x1), np.array(y1))
+        plt.show()
         return
 
     def average_fitness(self, fitness: list): 
