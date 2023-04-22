@@ -1,11 +1,17 @@
 # ----------- File For Genetic Algorithm -----------
+from CartesianIndividual import CartesianIndividual
 from Data import Data
+import FlowManager
+import Migration
 from MutationControl import MutationControl
 from StringIndividual import StringIndividual
 from NqueensIndividual import NqueensIndividual
 from BinPackingIndividual import BinPackingIndividual
-import CrossoverOperator
+import Individual
 import ParentOperator
+import CrossoverOperator
+import Clustering
+import Niche
 # ----------- Python Package -----------
 import time
 import numpy as np
@@ -18,23 +24,35 @@ ELITE_PERCENTAGE = 0.20
 STRING = 0
 N_QUEENS = 1
 BIN_PACKING = 2
+CARTESIAN = 3
+SHARED_FIT = 0
+CLUSTER = 1
+CROWDING = 2
+CONSTRAINT_1 = 1
+CONSTRAINT_2 = 2
+
 
 class Population:
     data: Data
     population: list
-    fitnesses: list
     best_fitness: float
+    center: Individual
+    optimization_func: int
+    fitnesses: list
 
-    def __init__(self):
-        self.data = Data()
+    def __init__(self, setting_vector = None):
+        self.data = Data(setting_vector)
         self.population = []
         self.fitnesses = []
         self.best_individual = 0
         self.best_fitness = 0
         self.max_weight = 0
         self.objects = []
+        self.niches = []
+        
         if self.data.problem == BIN_PACKING:
             self.read_file_bin_packing()
+            self.data.num_genes = int(1.5 * (np.sum(self.objects) / self.max_weight))
 
         for index in range(self.data.pop_size):
             if self.data.problem == STRING:
@@ -43,46 +61,30 @@ class Population:
                 individual = NqueensIndividual(self.data)
             elif self.data.problem == BIN_PACKING:
                 individual = BinPackingIndividual(self.data, self.objects.copy(), self.max_weight, self.best_fitness)
-                self.data.num_genes = math.ceil(sum(self.objects) / self.max_weight)
+            elif self.data.problem == CARTESIAN:
+                individual = CartesianIndividual(self.data)
 
             self.population.append(individual)
-
+            self.set_fitnesses()
+        return
+    
+    def set_fitnesses(self):
+        self.fitnesses = []
         for individual in self.population:
             self.fitnesses.append(individual.score)
-
         return
 
-    def genetic_algorithm(self):
-        crossover_op = CrossoverOperator.CrossoverOperator()
-        parent_op = ParentOperator.ParentOperator()
-        mutation_control = MutationControl(self.data, self.average_fitness(self.fitnesses))
-
+    def genetic_algorithm(self, migration = None, thread_index =None):
+        # ----------- Printing graphs for the report -----------
         # x1 = []
         # y1 = []
         # ax = plt.axes()
-        # ax.set(xlim=(0, 200), ylim=(-4000, 100), xlabel='Generation number', ylabel='Average fitness')
+        # ax.set(xlim=(0, 100),
+        #        ylim=(0, 10),
+        #        xlabel='Generation number',
+        #        ylabel='Genetic diversification distance')
 
-        for generation,generation_index in range(self.data.max_generations):
-            mutation_individuals = MUTATION_INDIVIDUALS
-            # old_average, old_variance, old_sd = self.average_fitness(self.fitnesses)
-
-            # ----------- Update Population Fitness  -----------
-
-            for index, individual in enumerate(self.population):
-                self.fitnesses[index] = individual.score
-
-            # ----------- Print Fitness Information -----------
-            # new_average, new_variance, new_sd = self.average_fitness(self.fitnesses)
-
-            gen_time = time.time()                                  # information
-            print("=========================================")
-            # print(f"Average for this gen is {new_average}")
-            # print(f"Selection Pressure for this gen is {new_variance}")
-            # print(f"Selection Pressure for this gen is {new_variance}")
-
-            # self.show_histogram(self.fitnesses)
-            # x1.append(generation)
-            # y1.append(new_average/100)
+        for generation_index in range(self.data.max_generations):
 
             # ----------- Elitism -----------
             # Select the best individuals for reproduction
@@ -90,63 +92,52 @@ class Population:
             elite_indices = sorted(range(self.data.pop_size), key=lambda i: self.fitnesses[i], reverse=True)[:elite_size]
             elites = [self.population[i] for i in elite_indices]
 
+            for ind in elites:
+                self.population.remove(ind)
+
+            # ----------- Clustering -----------
+            if generation_index % 5 == 0:
+                self.niches = []
+                clusters = Clustering.niche_algorithm(self.population, self.data.niche_algorithm)
+                for cluster in clusters:
+                    niche = Niche.Niche(cluster)
+                    self.niches.append(niche)
+
+            # x1.append(generation_index)
+            # y1.append(len(clusters))
+            # ----------- Print Fitness Information -----------
+            gen_time = time.time()
+            print(f"========================================= {generation_index}")
+            for index, niche in enumerate(self.niches):
+                average, variance, sd = self.average_fitness(niche.fitnesses)
+                print(f"Average for niche {index+1} is {average}")
+                print(f"Selection Pressure for niche {index+1} is {variance}")
+                
+                # self.show_histogram(niche.fitnesses)
+                # x1.append(generation_index)
+                # y1.append(average)
+
             # ----------- Generate New Individuals -----------
-            offspring = []
-            while len(offspring) < self.data.pop_size - elite_size:
-                # ----------- Parent Selection -----------
-                parents = parent_op.parent_selection_function(self.data.parent_selection, self.population, elites)
-                parent1 = parents[0]
-                parent2 = parents[1]
+            for niche in self.niches:
+                niche.generate_individuals(self.data, 
+                                           self.objects, 
+                                           self.max_weight, 
+                                           self.best_fitness,
+                                           generation_index,
+                                           elites)
+                
+            # ----------- Update Population -----------
+            self.population = elites
+            for niche in self.niches:
+                for ind in niche.individuals:
+                    self.population.append(ind)
 
-                # ----------- Creating Child -----------
-                if self.data.problem == STRING:
-                    child = StringIndividual(self.data)
-                elif self.data.problem == N_QUEENS:
-                    child = NqueensIndividual(self.data)
-                elif self.data.problem == BIN_PACKING:
-                    temp_objects = self.objects.copy()
-                    child = BinPackingIndividual(self.data, temp_objects, self.max_weight, self.best_fitness)
-
-                child_gen = crossover_op.crossover_operator(self.data.cross_operator, parent1, parent2, self.data.num_genes, self.data, self.best_fitness)  # exploration
-                child.gen = child_gen
-                child.gen_len = len(child_gen)
-                child.update_score(self.data)
-#----------------------------------------------------------------
-                mutation_control(generation_index,
-                            child.mutation(self.data), 
-                            # self.data.mutation,
-                            self.average_fitness(self.fitnesses) )          #mutation
-
-
-                # ----------- Mutation -----------
-                # if generation % 20 == 0:
-                #     # Find the individual with the best fitness
-                #     best_individual = self.population[0]
-                #     for individual in self.population:
-                #         if best_individual.score < individual.score:
-                #             best_individual = individual
-                #     best_individual.mutation(self.data)
-                #     best_individual.update_score(self.data)
-                #     mutation_individuals -= 1
-#----------------------------------------------------------------
-                if new_average == old_average and mutation_individuals > 0:
-                    # Find the individual with the best fitness
-                    best_individual = self.population[0]
-                    for individual in self.population:
-                        if best_individual.score < individual.score:
-                            best_individual = individual
-                    best_individual.mutation(self.data)
-                    best_individual.update_score(self.data)
-                    child.mutation(self.data)
-                    child.update_score(self.data)
-                    mutation_individuals -= 1
-#----------------------------------------------------------------
-
-                offspring.append(child)
+            # ----------- migration Population -----------
+            if migration != None:
+                migration.immigrant_selection(self.population, 2, thread_index)
+                self.population = migration.insert_imigranent_to_pop(self.data.viability_fuc_num, self.population, thread_index)
 
             # ----------- Update Population -----------
-            self.population = elites + offspring
-
             # Update the age of each individual, if reached max_age - remove from population
             for individual in self.population:
                 individual.age += 1
@@ -157,15 +148,21 @@ class Population:
             # Update the size of the  population
             self.data.pop_size = len(self.population)
 
-            # ----------- Genetic Diversification -----------
-            distance = 0
-            for individual in self.population:
-                distance += individual.genetic_diversification_distance(self.population)
-            distance = distance / len(self.population)
-            special = self.population[0].genetic_diversification_special(self.population)
+            # Update fitness list for population
+            self.set_fitnesses()
 
-            print("The genetic diversification distance for this gen is:", distance)
-            print("The genetic diversification special for this gen is:", special)
+            # ----------- Genetic Diversification -----------
+            distance_all = 0
+            for index, niche in enumerate(self.niches):
+                distance = 0
+                for ind in niche.individuals:
+                    distance += ind.genetic_diversification_distance(niche.individuals)
+                distance = distance / len(self.population)
+                distance_all += distance
+                special = niche.individuals[0].genetic_diversification_special(niche.individuals)
+                print(f"The genetic diversification distance for niche {index+1} is: {distance}")
+                print(f"The genetic diversification special for niche {index+1} is: {special}")
+            # y1.append(distance_all/ len(self.niches))
 
             # ----------- Print Time Information -----------
             print(f"The absolute time for this gen is {time.time() - gen_time} sec")
@@ -184,12 +181,17 @@ class Population:
         # plt.show()
         return
 
-    def average_fitness(self, fitness: list):               # information
+    def average_fitness(self, fitness: list): 
         if not fitness:
             return 0
-        average = sum(fitness) / len(fitness)
-        variance = sum([((x - average) ** 2) for x in fitness]) / len(fitness) - 1
+        try:
+            average = sum(fitness) / len(fitness)
+            variance = sum([((x - average) ** 2) for x in fitness]) / (len(fitness) - 1)
+        except:
+            average = 0
+            variance = 0
         sd = variance ** 0.5
+
         return average, variance, sd
 
     def show_histogram(self, array):
@@ -199,11 +201,11 @@ class Population:
         return
 
     def read_file_bin_packing(self):
-        with open("binpack1.txt") as f:
+        with open("BinPackingTests/binpack1.txt") as f:
             f.readline()
             f.readline()
             list_info = f.readline().split()
-            print(list_info)
+            # print(list_info)
             self.max_weight = int(list_info[0])
             num_items = int(list_info[1])
             self.best_fitness = int(list_info[2])

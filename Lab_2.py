@@ -1,16 +1,13 @@
 # -----------Students ID -----------
 # ID_1: 305283111
-# ID_2: 207479940
+# ID_2: 2074799400
 # ----------- File For Genetic Algorithm -----------
 import FlowManager
 # ----------- Python Package -----------
 
 def main():
     flow_manager = FlowManager.FlowManager()
-    flow_manager.run_single_population_solution()
-    # flow_manager.run_multi_thread_population_solution()
-    flow_manager.show_results()
-
+    flow_manager.user_run()   
     return
 
 
